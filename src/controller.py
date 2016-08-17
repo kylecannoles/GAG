@@ -8,7 +8,7 @@ from src.gff_reader import GFFReader
 from src.filter_manager import FilterManager
 from src.stats_manager import StatsManager
 
-class Controller:
+class Controller(object):
 
     def __init__(self):
         self.seqs = []
@@ -157,7 +157,8 @@ class Controller:
             stats_file.write(line)
 
         # Write fasta, gff, tbl, protein fasta
-        sys.stderr.write("Writing gff, tbl and fasta to " + out_dir + "/ ...\n")
+        sys.stderr.write("Writing gff, tbl and fasta to " + out_dir +
+                         "/ ...\n")
         gff.write("##gff-version 3\n")
         for seq in self.seqs:
             fasta.write(seq.to_fasta())
@@ -185,7 +186,8 @@ class Controller:
 
     def trim_from_file(self, filename):
         if not os.path.isfile(filename):
-            sys.stderr.write("Error: " + filename + " is not a file. Nothing trimmed.\n")
+            sys.stderr.write("Error: " + filename +
+                             " is not a file. Nothing trimmed.\n")
             return
         trimlist = self.read_bed_file(open(filename, 'rb'))
         if not trimlist:
@@ -196,11 +198,13 @@ class Controller:
 
     def annotate_from_file(self, filename):
         if not os.path.isfile(filename):
-            sys.stderr.write("Error: " + filename + " is not a file. Nothing annotated.\n")
+            sys.stderr.write("Error: " + filename +
+                             " is not a file. Nothing annotated.\n")
             return
         annos = self.read_annotation_file(open(filename, 'rb'))
         if not annos:
-            sys.stderr.write("Failed to read annotations from " + filename + "; no annotations added.\n")
+            sys.stderr.write("Failed to read annotations from " + filename +
+                             "; no annotations added.\n")
             return
         else:
             sys.stderr.write("Adding annotations to genome ...\n")
@@ -212,7 +216,8 @@ class Controller:
             # In the case that there are multiple regions to trim in a single
             # sequence, trim from the end so indices don't get messed up
             to_trim_this_seq = [x for x in trimlist if x[0] == seq.header]
-            to_trim_this_seq = sorted(to_trim_this_seq, key=lambda entry: entry[2], reverse=True)
+            to_trim_this_seq = sorted(to_trim_this_seq,
+                                      key=lambda entry: entry[2], reverse=True)
             for entry in to_trim_this_seq:
                 removed_genes = seq.trim_region(entry[1], entry[2])
                 self.removed_features.extend(removed_genes)
@@ -222,7 +227,7 @@ class Controller:
 
     def get_filter_arg(self, filter_name):
         return self.filter_mgr.get_filter_arg(filter_name)
-        
+
     def apply_filter(self, filter_name, val, filter_mode):
         for seq in self.seqs:
             self.filter_mgr.apply_filter(filter_name, val, filter_mode, seq)
@@ -263,41 +268,13 @@ class Controller:
             for item in ignored:
                 ignored_file.write(item)
 
-    def read_bed_file(self, io_buffer):
-        trimlist = []
-        for line in io_buffer:
-            splitline = line.strip().split('\t')
-            if len(splitline) != 3:
-                return []
-            else:
-                try:
-                    entry = [splitline[0], int(splitline[1]), int(splitline[2])]
-                except ValueError:
-                    sys.stderr.write("Error reading .bed file. Non-integer value ")
-                    sys.stderr.write("in column 2 or 3. Here is the line:\n")
-                    sys.stderr.write(line)
-                    return []
-                trimlist.append(entry)
-        return trimlist
-
-    def read_annotation_file(self, io_buffer):
-        annos = []
-        for line in io_buffer:
-            splitline = line.strip().split('\t')
-            if len(splitline) != 3:
-                return []
-            else:
-                annos.append(splitline)
-        return annos
-
-
 ## Clean up
 
     def remove_empty_features(self, seq):
         """Removes any empty mRNAs or genes from a seq and adds them to self.removed_features."""
         self.removed_features.extend(seq.remove_empty_mrnas())
         self.removed_features.extend(seq.remove_empty_genes())
-        
+
     def stats(self):
         if not self.seqs:
             return "No sequences, can't provide statistics." #self.no_genome_message
@@ -328,7 +305,7 @@ class Controller:
             else:
                 locus_tag = seq.get_locus_tag()
         return locus_tag
-    
+
     def remove_from_list(self, bad_list):
         # First remove any seqs on the list
         to_remove = []
@@ -357,3 +334,33 @@ class Controller:
             if seq.contains_gene(gene_id):
                 return True
         return False
+
+## utility functions
+
+def read_bed_file(io_buffer):
+    trimlist = []
+    for line in io_buffer:
+        splitline = line.strip().split('\t')
+        if len(splitline) != 3:
+            return []
+        else:
+            try:
+                entry = [splitline[0], int(splitline[1]), int(splitline[2])]
+            except ValueError:
+                sys.stderr.write("Error reading .bed file. Non-integer value ")
+                sys.stderr.write("in column 2 or 3. Here is the line:\n")
+                sys.stderr.write(line)
+                return []
+            trimlist.append(entry)
+    return trimlist
+
+def read_annotation_file(io_buffer):
+    annos = []
+    for line in io_buffer:
+        splitline = line.strip().split('\t')
+        if len(splitline) != 3:
+            return []
+        else:
+            annos.append(splitline)
+    return annos
+    
