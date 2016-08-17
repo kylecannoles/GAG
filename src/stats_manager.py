@@ -123,9 +123,10 @@ def format_columns(column_names, key_order, dicts, spacing = 3):
     columns[0] = format_column(columns[0], spacing)
     
     # Notes: Python automatically sorts dictionary contents by key, so this will work.
-    # TODO: Nevertheless, make this code less hacky
+    # TODO: Nevertheless, make this code less hacky 
+    # TODO: ^dictionary does not sort contents.  added sorted(dicts)
     
-    for i, dic in enumerate(dicts):
+    for i, dic in enumerate(sorted(dicts)):
         new_column = [column_names[i], '-'*len(column_names[i])]
         new_column.extend([str(dic[key]) for key in key_order])
         columns.append(format_column(new_column, spacing))

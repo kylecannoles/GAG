@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import src.translator as translate
 
 class GenePart:
     def __init__(self, feature_type=None, identifier=None,\
