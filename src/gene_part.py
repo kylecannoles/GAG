@@ -2,7 +2,7 @@
 
 import math
 
-class GenePart:
+class GenePart(object):
     def __init__(self, feature_type=None, identifier=None,\
                  indices=None, score=None, strand='+', parent_id=None):
         self.feature_type = feature_type
@@ -57,12 +57,12 @@ class GenePart:
             return
         if length == len(self.score):
             sort_scores = True
-        # Build a list of lists where each entry is 
+        # Build a list of lists where each entry is
         # composed of attributes
         all_attributes = []
         for i in xrange(length):
-            all_attributes.append([self.indices[i][0], self.indices[i][1], 
-                self.identifier[i]])
+            all_attributes.append([self.indices[i][0], self.indices[i][1],
+                                   self.identifier[i]])
             if sort_scores:
                 all_attributes[i].append(self.score[i])
 
@@ -87,7 +87,7 @@ class GenePart:
             value: a string representing the content of the annotation
         """
         self.annotations.append([key, value])
-    
+
     def gagflagged(self):
         """Returns a boolean indicating whether the GenePart contains a 'gagflag' annotation."""
         for anno in self.annotations:
@@ -121,9 +121,9 @@ class GenePart:
         This method exists to be overridden by CDS; it simply returns '.'
         for other features as this is the default value in a .gff file.
         """
-        return "."
+        return(".")
 
-    def adjust_indices(self, n, start_index=1):
+    def adjust_indices(self, increment_by, start_index=1):
         """Increments indices of GenePart.
 
         Optionally, only indices occurring after start_index are incremented.
@@ -134,9 +134,9 @@ class GenePart:
         """
         for i, index_pair in enumerate(self.indices):
             if index_pair[0] >= start_index:
-                self.indices[i] = adjust_index_pair(self.indices[i], n)
+                self.indices[i] = adjust_index_pair(self.indices[i], increment_by)
             elif index_pair[1] >= start_index:
-                self.indices[i][1] += n
+                self.indices[i][1] += increment_by
 
     def generate_attribute_entry(self, i):
         """Returns a string representing a GenePart's .gff attribute entry.
@@ -182,8 +182,7 @@ def get_reversed_indices(indices):
     Each pair in the list is reversed, and the order of the
     pairs is also reversed.
     """
-    indices.reverse()
-    [ind.reverse() for ind in indices]
+    indices = [ind[::-1] for ind in indices][::-1]
     return indices
 
 def one_line_indices_entry(indices, has_start, has_stop, feature_type):
@@ -218,7 +217,7 @@ def write_tbl_entry(indices, strand, has_start, has_stop, feature_type, phase=0)
         # Write first line of coordinates
         if not has_start:
             output += "<"
-        output += str(indices[0][0]) + "\t" + str(indices[0][1]) + "\t" 
+        output += str(indices[0][0]) + "\t" + str(indices[0][1]) + "\t"
         output += feature_type+"\n"
         # Write middle lines
         for index_pair in indices[1:-1]:
