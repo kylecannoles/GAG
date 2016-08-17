@@ -189,7 +189,7 @@ class Controller(object):
             sys.stderr.write("Error: " + filename +
                              " is not a file. Nothing trimmed.\n")
             return
-        trimlist = self.read_bed_file(open(filename, 'rb'))
+        trimlist = read_bed_file(open(filename, 'rb'))
         if not trimlist:
             sys.stderr.write("Failed to read .bed file; nothing trimmed.\n")
             return
@@ -201,7 +201,7 @@ class Controller(object):
             sys.stderr.write("Error: " + filename +
                              " is not a file. Nothing annotated.\n")
             return
-        annos = self.read_annotation_file(open(filename, 'rb'))
+        annos = read_annotation_file(open(filename, 'rb'))
         if not annos:
             sys.stderr.write("Failed to read annotations from " + filename +
                              "; no annotations added.\n")
