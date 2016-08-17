@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import copy
-from src.gene_part import *
+from src.gene_part import GenePart, write_tbl_entry
+from src.translator import reverse_complement
 
 class CDS(GenePart):
 
@@ -20,9 +21,9 @@ class CDS(GenePart):
         else:
             return "."
 
-    def add_phase(self, ph):
+    def add_phase(self, phase):
         """Appends phase to CDS"""
-        self.phase.append(ph)
+        self.phase.append(phase)
 
     def get_start_indices(self, strand):
         """Returns coordinates of first and third base of CDS."""
@@ -55,12 +56,12 @@ class CDS(GenePart):
             return
         if length == len(self.score):
             sort_scores = True
-        # Build a list of lists where each entry is 
+        # Build a list of lists where each entry is
         # composed of attributes
         all_attributes = []
         for i in xrange(length):
-            all_attributes.append([self.indices[i][0], self.indices[i][1], 
-                self.identifier[i], self.phase[i]])
+            all_attributes.append([self.indices[i][0], self.indices[i][1],
+                                   self.identifier[i], self.phase[i]])
             if sort_scores:
                 all_attributes[i].append(self.score[i])
 
@@ -85,7 +86,7 @@ class CDS(GenePart):
             seq_object: the actual Sequence containing the CDS. I know, I know.
             strand: either '+' or '-'
         Returns:
-            a string of nucleotides (or an empty string if strand is invalid or 
+            a string of nucleotides (or an empty string if strand is invalid or
             CDS has no indices)
         """
         seq = ''
@@ -95,7 +96,7 @@ class CDS(GenePart):
             if subseq:
                 seq += subseq
         if strand == '-':
-            seq = translate.reverse_complement(seq)
+            seq = reverse_complement(seq)
         return seq
 
     def to_tbl(self, has_start, has_stop):
@@ -105,5 +106,5 @@ class CDS(GenePart):
             phase = self.phase[0]
         else:
             phase = self.phase[-1]
-        return write_tbl_entry(indices, self.strand, has_start, has_stop, "CDS", phase) 
+        return write_tbl_entry(indices, self.strand, has_start, has_stop, "CDS", phase)
 
