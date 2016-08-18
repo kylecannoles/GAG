@@ -60,7 +60,7 @@ def translate(seq, strand):
 
     # Now translate
     peptide = ''
-    
+
     for i in xrange(0, len(seq), 3):
         codon = seq[i: i+3]
         if len(codon) != 3:

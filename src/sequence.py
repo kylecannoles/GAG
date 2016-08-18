@@ -34,7 +34,7 @@ class Sequence:
                 if mrna.identifier == mrna_id:
                     return True
         return False
-    
+
     def remove_gene(self, gene_id):
         to_remove = None
         for gene in self.genes:
@@ -72,7 +72,7 @@ class Sequence:
             removed_from_gene = gene.remove_mrnas_from_list(bad_mrnas)
             removed_mrnas.extend(removed_from_gene)
         return removed_mrnas
-    
+
     def remove_empty_genes(self):
         """Removes any gene containing no mRNAs; returns a list of removed genes."""
         to_remove = []
@@ -85,7 +85,7 @@ class Sequence:
                 sys.stderr.write("Removed empty gene " + gene.identifier + "\n")
             self.removed_genes.extend(to_remove)
         return to_remove
-    
+
     def remove_empty_mrnas(self):
         removed_mrnas = []
         for gene in self.genes:
@@ -106,7 +106,7 @@ class Sequence:
         for gene in self.genes:
             total += gene.number_of_gagflags()
         return total
-        
+
     def get_gene_ids(self):
         result = []
         for gene in self.genes:
@@ -142,8 +142,8 @@ class Sequence:
         if terminal_ns:
             self.trim_region(length-terminal_ns+1, length)
 
-    # Given a position in the sequence, returns the number of Ns 
-    # from that position forward 
+    # Given a position in the sequence, returns the number of Ns
+    # from that position forward
     # (returns 0 if the base at that position is not N)
     def how_many_Ns_forward(self, position):
         index = position-1
@@ -159,8 +159,8 @@ class Sequence:
                     count += 1
             return count
 
-    # Given a position in the fasta, returns the number of Ns 
-    # from that position backward 
+    # Given a position in the fasta, returns the number of Ns
+    # from that position backward
     # (returns 0 if the base at that position is not N)
     def how_many_Ns_backward(self, position):
         index = position-1
@@ -189,9 +189,10 @@ class Sequence:
         self.bases = self.bases[:start-1] + self.bases[stop:]
         # Adjust indices of remaining genes
         bases_removed = stop - start + 1
+        #TODO: figure out what this is supposed to do.
         [g.adjust_indices(-bases_removed, start) for g in self.genes]
         return genes_to_remove
-        
+
     def get_subseq(self, start=1, stop=None):
         if not stop:
             stop = len(self.bases)
@@ -210,7 +211,7 @@ class Sequence:
     def create_starts_and_stops(self):
         for gene in self.genes:
             gene.create_starts_and_stops(self)
-    
+
     def get_contained_genes(self):
         contained = []
         for i, a in enumerate(self.genes):
@@ -225,7 +226,7 @@ class Sequence:
                 elif b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and not a in contained:
                     contained.append(a)
         return contained
-    
+
     def get_overlapping_genes(self):
         contained = []
         for i, a in enumerate(self.genes):
@@ -283,7 +284,7 @@ class Sequence:
         for gene in self.genes:
             result += gene.to_gff()
         return result
-    
+
     def removed_to_gff(self):
         result = ""
         # Write alive genes' removed mrnas
@@ -308,7 +309,7 @@ class Sequence:
         for gene in self.genes:
             count += gene.get_num_exons()
         return count
-        
+
     def get_num_cds(self):
         count = 0
         for gene in self.genes:
@@ -327,14 +328,14 @@ class Sequence:
             results["CDS: stop, no start"] += partial_info["stop_no_start"]
             results["CDS: no stop, no start"] += partial_info["no_stop_no_start"]
         return results
-        
+
     def get_longest_gene(self):
         length = 0
         for gene in self.genes:
             if gene.length() > length:
                 length = gene.length()
         return length
-        
+
     def get_longest_mrna(self):
         length = 0
         for gene in self.genes:
@@ -368,7 +369,7 @@ class Sequence:
         for gene in self.genes:
             total += gene.get_total_exon_length()
         return total
-        
+
     def get_longest_intron(self):
         longest = 0
         for gene in self.genes:
@@ -400,7 +401,7 @@ class Sequence:
         for gene in self.genes:
             total += gene.get_num_introns()
         return total
-        
+
     def get_longest_cds(self):
         length = 0
         for gene in self.genes:
@@ -408,7 +409,7 @@ class Sequence:
                 if mrna.cds and mrna.cds.length() > length:
                     length = mrna.cds.length()
         return length
-        
+
     def get_shortest_gene(self):
         length = 0
         shortest = None
@@ -417,7 +418,7 @@ class Sequence:
                 length = gene.length()
                 shortest = gene
         return length
-        
+
     def get_shortest_mrna(self):
         length = 0
         shortest = None
@@ -427,7 +428,7 @@ class Sequence:
                     length = mrna.length()
                     shortest = mrna
         return length
-        
+
     def get_shortest_cds(self):
         length = 0
         shortest = None
@@ -450,7 +451,7 @@ class Sequence:
             for mrna in gene.mrnas:
                 length += mrna.length()
         return length
-        
+
     def get_total_cds_length(self):
         length = 0
         for gene in self.genes:
@@ -458,11 +459,11 @@ class Sequence:
                 if mrna.cds:
                     length += mrna.cds.length()
         return length
-        
+
     def stats(self):
         stats = dict()
         cds_partial_info = self.get_cds_partial_info()
-        
+
         stats["Total sequence length"] = len(self.bases)
         stats["Number of genes"] = len(self.genes)
         stats["Number of mRNAs"] = int(self.get_num_mrna())
@@ -490,7 +491,7 @@ class Sequence:
         stats["Total exon length"] = int(self.get_total_exon_length())
         stats["Total intron length"] = int(self.get_total_intron_length())
         stats["Total CDS length"] = int(self.get_total_cds_length())
-        
+
         return stats
 
 def overlap(indices1, indices2):

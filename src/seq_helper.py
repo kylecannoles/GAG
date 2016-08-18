@@ -2,7 +2,7 @@
 
 from src.translator import translate, reverse_complement, contains_internal_stop
 
-class SeqHelper:
+class SeqHelper(object):
 
     def __init__(self, bases):
         self.full_sequence = bases

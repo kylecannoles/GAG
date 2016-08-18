@@ -43,10 +43,10 @@ class XRNA:
         if self.cds:
             result += "CDS "
         if len(self.other_features) > 0:
-            result += "and " + str(len(self.other_features)) 
+            result += "and " + str(len(self.other_features))
             result += " other features"
         return result
-        
+
     def add_annotation(self, key, value):
         """Adds an annotation to the RNA.
 
@@ -58,7 +58,7 @@ class XRNA:
             self.annotations[key].append(value)
         else:
             self.annotations[key] = [value]
-        
+
     def length(self):
         """Returns the length of the RNA."""
         return length_of_segment(self.indices)
@@ -232,7 +232,7 @@ class XRNA:
             output += "\t\t\ttranscript_id\tgnl|ncbi|"+self.identifier+"_mrna\n"
         if self.cds:
             output += self.cds.to_tbl(has_start, has_stop)
-            # Write the annotations 
+            # Write the annotations
             for key in self.annotations.keys():
                 for value in self.annotations[key]:
                     output += '\t\t\t'+key+'\t'+value+'\n'
@@ -273,7 +273,7 @@ class XRNA:
         """Returns sum of all child exon lengths."""
         if not self.exon:
             return 0
-    
+
         total = 0
         for index_pair in self.exon.indices:
             total += length_of_segment(index_pair)
@@ -311,7 +311,7 @@ class XRNA:
                 this_intron = abs(index_pair[0] - last_end) - 1
                 if this_intron == 0:
                     continue
-                if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0) 
+                if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
                 or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
                     raise Exception("Intron with negative length with {} on {} \
 strand with name: {}".format(index_pair[0] - last_end - 1,
