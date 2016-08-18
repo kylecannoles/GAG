@@ -3,9 +3,11 @@
 import ast
 
 # All the filters
-from src.filters import *
+from src.filters import MinCDSLengthFilter, MaxCDSLengthFilter, MinExonLengthFilter,\
+                        MaxExonLengthFilter, MinIntronLengthFilter, MaxIntronLengthFilter,\
+                        MinGeneLengthFilter, MaxGeneLengthFilter
 
-class FilterManager:
+class FilterManager(object):
 
     def __init__(self):
         # Build filters
@@ -18,13 +20,13 @@ class FilterManager:
         self.filters['intron_longer_than'] = MaxIntronLengthFilter()
         self.filters['gene_shorter_than'] = MinGeneLengthFilter()
         self.filters['gene_longer_than'] = MaxGeneLengthFilter()
-    
+
     def apply_filter(self, filter_name, val, filter_mode, seq):
         val = ast.literal_eval(val)
         self.filters[filter_name].arg = val
-        self.filters[filter_name].filter_mode = filter_mode 
+        self.filters[filter_name].filter_mode = filter_mode
         self.filters[filter_name].apply(seq)
-    
+
     def get_filter_arg(self, filter_name):
         return self.filters[filter_name].arg
-   
+
