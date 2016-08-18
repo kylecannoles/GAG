@@ -121,7 +121,7 @@ class GenePart(object):
         This method exists to be overridden by CDS; it simply returns '.'
         for other features as this is the default value in a .gff file.
         """
-        return(".")
+        return "."
 
     def adjust_indices(self, increment_by, start_index=1):
         """Increments indices of GenePart.
