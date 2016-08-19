@@ -149,8 +149,8 @@ class MinIntronLengthFilter(object):
         for gene in seq.genes:
             for mrna in gene.mrnas:
                 if (mrna.exon and
-                            mrna.get_shortest_intron() < self.arg and
-                            mrna.get_shortest_intron() != 0):
+                        mrna.get_shortest_intron() < self.arg and
+                        mrna.get_shortest_intron() != 0):
                     mrna.exon.add_annotation("gag_flag", "intron_min_length:" + str(self.arg))
                     mrna.death_flagged = True  # Destroy the mRNA that the intron lives on?
 

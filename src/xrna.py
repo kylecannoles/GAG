@@ -315,7 +315,7 @@ class XRNA(object):
                 if this_intron == 0:
                     continue
                 if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
-                    or (self.strand == '-' and (index_pair[0] - last_end - 1) > 0)):
+                        or (self.strand == '-' and (index_pair[0] - last_end - 1) > 0)):
                     raise Exception("Intron with negative length with {} on {} \
                                      strand with name: {}".format(index_pair[0] - last_end - 1,
                                                                   self.strand, self.seq_name))
