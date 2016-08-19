@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
 import math
-from src.gene_part import GenePart
+
 import src.translator as translate
+from src.gene_part import GenePart
+
 
 def length_of_segment(index_pair):
     return math.fabs(index_pair[1] - index_pair[0]) + 1
 
-class XRNA:
 
-    def __init__(self, identifier, indices, parent_id, source=None, seq_name=None, strand='+', annotations=None, rna_type="mRNA"):
+class XRNA(object):
+    def __init__(self, identifier, indices, parent_id, source=None, seq_name=None, strand='+',
+                 annotations=None, rna_type="mRNA"):
         self.rna_type = rna_type
         self.identifier = identifier
         self.indices = indices
@@ -37,16 +40,16 @@ class XRNA:
 
         String contains the RNA's identifier and the number of features it contains.
         """
-        result = self.rna_type+" (ID=" + str(self.identifier) + ") containing "
+        result = self.rna_type + " (ID=" + str(self.identifier) + ") containing "
         if self.exon:
             result += "Exon, "
         if self.cds:
             result += "CDS "
         if len(self.other_features) > 0:
-            result += "and " + str(len(self.other_features)) 
+            result += "and " + str(len(self.other_features))
             result += " other features"
         return result
-        
+
     def add_annotation(self, key, value):
         """Adds an annotation to the RNA.
 
@@ -58,30 +61,30 @@ class XRNA:
             self.annotations[key].append(value)
         else:
             self.annotations[key] = [value]
-        
+
     def length(self):
         """Returns the length of the RNA."""
         return length_of_segment(self.indices)
 
-    def adjust_indices(self, n, start_index=1):
+    def adjust_indices(self, increment_by, start_index=1):
         """Increments indices of RNA and its child features.
 
         Optionally, only indices occurring after start_index are incremented.
 
         Args:
-            n: integer by which to increment indices
+            increment_by: integer by which to increment indices
             start_index: optional coordinate before which no indices will be changed.
         """
         if self.indices[0] > start_index:
-            self.indices = [i + n for i in self.indices]
+            self.indices = [i + increment_by for i in self.indices]
         elif self.indices[1] > start_index:
-            self.indices[1] += n
+            self.indices[1] += increment_by
         if self.exon:
-            self.exon.adjust_indices(n, start_index)
+            self.exon.adjust_indices(increment_by, start_index)
         if self.cds:
-            self.cds.adjust_indices(n, start_index)
+            self.cds.adjust_indices(increment_by, start_index)
         for feature in self.other_features:
-            feature.adjust_indices(n, start_index)
+            feature.adjust_indices(increment_by, start_index)
 
     def number_of_gagflags(self):
         """Returns the number of flagged features contained by RNA.
@@ -96,7 +99,7 @@ class XRNA:
             total += 1
         return total
 
-    def create_start_and_stop_if_necessary(self, seq_object, strand):
+    def create_start_and_stop_if_needed(self, seq_object, strand):
         """Inspects child CDS and creates start/stop codons if appropriate.
 
         This is accomplished by examining the first and last three nucleotides
@@ -128,10 +131,10 @@ class XRNA:
         self_start = self.indices[0]
         self_end = self.indices[1]
         # mrna contains beginning of indices
-        if self_start <= begin and self_end >= begin:
+        if self_start <= begin <= self_end:
             return True
         # mrna contains end of indices
-        elif self_start <= end and self_end >= end:
+        elif self_start <= end <= self_end:
             return True
         # indices contain entire mrna
         elif begin <= self_start and end >= self_end:
@@ -148,16 +151,16 @@ class XRNA:
         # TODO figure out naming scheme...
         start_id = self.identifier + ":start"
         start_parent_id = self.identifier
-        start = GenePart(feature_type='start_codon', identifier=start_id, \
-                indices=indices, parent_id=start_parent_id, strand=self.strand)
+        start = GenePart(feature_type='start_codon', identifier=start_id,
+                         indices=indices, parent_id=start_parent_id, strand=self.strand)
         self.add_other_feature(start)
 
     def add_stop_codon(self, indices):
         """Adds a stop_codon GenePart to MRNA.other_features"""
         stop_id = self.identifier + ":stop"
         stop_parent_id = self.identifier
-        stop = GenePart(feature_type='stop_codon', identifier=stop_id, \
-                indices=indices, parent_id=stop_parent_id, strand=self.strand)
+        stop = GenePart(feature_type='stop_codon', identifier=stop_id,
+                        indices=indices, parent_id=stop_parent_id, strand=self.strand)
         self.add_other_feature(stop)
 
     def has_start(self):
@@ -228,21 +231,21 @@ class XRNA:
                 output += "\t\t\tproduct\t" + self.annotations['product'][0] + "\n"
             else:
                 output += "\t\t\tproduct\thypothetical protein\n"
-            output += "\t\t\tprotein_id\tgnl|ncbi|"+self.identifier+"\n"
-            output += "\t\t\ttranscript_id\tgnl|ncbi|"+self.identifier+"_mrna\n"
+            output += "\t\t\tprotein_id\tgnl|ncbi|" + self.identifier + "\n"
+            output += "\t\t\ttranscript_id\tgnl|ncbi|" + self.identifier + "_mrna\n"
         if self.cds:
             output += self.cds.to_tbl(has_start, has_stop)
-            # Write the annotations 
+            # Write the annotations
             for key in self.annotations.keys():
                 for value in self.annotations[key]:
-                    output += '\t\t\t'+key+'\t'+value+'\n'
+                    output += '\t\t\t' + key + '\t' + value + '\n'
             if not self.annotations_contain_product():
                 output += "\t\t\tproduct\thypothetical protein\n"
-            output += "\t\t\tprotein_id\tgnl|ncbi|"+self.identifier+"\n"
-            output += "\t\t\ttranscript_id\tgnl|ncbi|"+self.identifier+"_mrna\n"
+            output += "\t\t\tprotein_id\tgnl|ncbi|" + self.identifier + "\n"
+            output += "\t\t\ttranscript_id\tgnl|ncbi|" + self.identifier + "_mrna\n"
         return output
 
-    ## STATS STUFF ##
+    # STATS STUFF
 
     def get_longest_exon(self):
         """Returns length of longest exon contained on RNA."""
@@ -263,9 +266,9 @@ class XRNA:
             length = length_of_segment(index_pair)
             if length == 0:
                 continue
-            if shortest == None or length_of_segment(index_pair) < shortest:
+            if shortest is None or length_of_segment(index_pair) < shortest:
                 shortest = length
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 
@@ -273,7 +276,7 @@ class XRNA:
         """Returns sum of all child exon lengths."""
         if not self.exon:
             return 0
-    
+
         total = 0
         for index_pair in self.exon.indices:
             total += length_of_segment(index_pair)
@@ -311,15 +314,15 @@ class XRNA:
                 this_intron = abs(index_pair[0] - last_end) - 1
                 if this_intron == 0:
                     continue
-                if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0) 
-                or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
+                if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
+                        or (self.strand == '-' and (index_pair[0] - last_end - 1) > 0)):
                     raise Exception("Intron with negative length with {} on {} \
-strand with name: {}".format(index_pair[0] - last_end - 1,
-                                                 self.strand, self.seq_name))
-                if shortest == None or this_intron < shortest:
+                                     strand with name: {}".format(index_pair[0] - last_end - 1,
+                                                                  self.strand, self.seq_name))
+                if shortest is None or this_intron < shortest:
                     shortest = this_intron
             last_end = index_pair[1]
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 
@@ -344,4 +347,3 @@ strand with name: {}".format(index_pair[0] - last_end - 1,
 
     def annotations_contain_product(self):
         return 'product' in self.annotations.keys()
-

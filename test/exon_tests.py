@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 
 import unittest
-from mock import Mock, PropertyMock
-from src.gene_part import GenePart, get_reversed_indices
+
 from src.exon import Exon
+from src.gene_part import get_reversed_indices
+
 
 class TestExon(unittest.TestCase):
-
     def setUp(self):
         test_identifier1 = 3
-        test_indices1 = [3734, 4034] 
+        test_indices1 = [3734, 4034]
         test_score1 = 0.9
         test_parent_id1 = 2
-        self.test_exon0 = Exon(identifier=test_identifier1, indices=test_indices1, score=test_score1, parent_id=test_parent_id1)
+        self.test_exon0 = Exon(identifier=test_identifier1, indices=test_indices1,
+                               score=test_score1, parent_id=test_parent_id1)
         self.extra_identifiers = [4, 5, 6, 7]
         self.extra_scores = [0.9, 0.9, 0.9, 0.9]
         self.extra_indices = [[4092, 4332], [4399, 5185], [5249, 6565], [6630, 7436]]
-        self.test_exon1 = Exon(identifier=test_identifier1, indices=test_indices1, score=test_score1, parent_id=test_parent_id1)
+        self.test_exon1 = Exon(identifier=test_identifier1, indices=test_indices1,
+                               score=test_score1, parent_id=test_parent_id1)
         for ind_pair in self.extra_indices:
             self.test_exon1.add_indices(ind_pair)
         for ident in self.extra_identifiers:
@@ -45,12 +47,12 @@ class TestExon(unittest.TestCase):
             self.test_exon0.add_score(score)
         self.assertEquals(5, len(self.test_exon0.score))
         self.assertEquals(0.9, self.test_exon0.score[4])
-       
-    def test_length(self): 
+
+    def test_length(self):
         self.assertEquals(301, self.test_exon0.length())
         self.assertEquals(3453, self.test_exon1.length())
-       
-    def test_adjust_indices(self): 
+
+    def test_adjust_indices(self):
         self.test_exon1.adjust_indices(7)
         self.assertEquals(4339, self.test_exon1.indices[1][1])
         # adjust them back...
@@ -108,13 +110,13 @@ class TestExon(unittest.TestCase):
         expected = [[50, 40], [30, 20], [10, 1]]
         self.assertEquals(get_reversed_indices(indices), expected)
 
-        
 
 ##########################
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestExon))
-    return suite
+    _suite = unittest.TestSuite()
+    _suite.addTest(unittest.makeSuite(TestExon))
+    return _suite
+
 
 if __name__ == '__main__':
     unittest.main()

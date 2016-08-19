@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-import sys
-
 BASES = ['t', 'c', 'a', 'g']
-CODONS = [a+b+c for a in BASES for b in BASES for c in BASES]
+CODONS = [a + b + c for a in BASES for b in BASES for c in BASES]
 AMINO_ACIDS = 'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG'
 CODON_TABLE = dict(zip(CODONS, AMINO_ACIDS))
+
 
 def valid_seq(seq):
     # Assumes seq is already lowercase
@@ -18,11 +17,14 @@ def valid_seq(seq):
     else:
         return True
 
+
 def valid_strand(strand):
     return strand in ['+', '-']
 
+
 def has_start_codon(seq):
     return seq[:3].lower() == 'aug' or seq[:3].lower() == 'atg'
+
 
 def has_stop_codon(seq):
     last3 = seq[-3:].lower()
@@ -35,9 +37,11 @@ def has_stop_codon(seq):
     else:
         return False
 
+
 def contains_internal_stop(seq, strand):
     translated = translate(seq, strand)
     return '*' in translated[:-1]
+
 
 def reverse_complement(seq):
     bases = ['a', 'c', 'g', 't', 'n', 'A', 'C', 'G', 'T', 'N']
@@ -46,8 +50,9 @@ def reverse_complement(seq):
     # Convert mixed or illegal bases to 'N'
     for i, base in enumerate(seq):
         if base not in 'actgnACTGN':
-            seq = seq[0:i] + 'N' + seq[i+1:]
+            seq = seq[0:i] + 'N' + seq[i + 1:]
     return ''.join([rev_comp_dict.get(base) for base in reversed(seq)])
+
 
 def translate(seq, strand):
     seq = seq.lower().replace('\n', '').replace(' ', '')
@@ -62,9 +67,9 @@ def translate(seq, strand):
 
     # Now translate
     peptide = ''
-    
+
     for i in xrange(0, len(seq), 3):
-        codon = seq[i: i+3]
+        codon = seq[i: i + 3]
         if len(codon) != 3:
             amino_acid = ''
         elif 'N' in codon or 'n' in codon or codon not in CODON_TABLE.keys():
