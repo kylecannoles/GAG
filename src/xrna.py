@@ -7,9 +7,10 @@ import src.translator as translate
 def length_of_segment(index_pair):
     return math.fabs(index_pair[1] - index_pair[0]) + 1
 
-class XRNA:
+class XRNA(object):
 
-    def __init__(self, identifier, indices, parent_id, source=None, seq_name=None, strand='+', annotations=None, rna_type="mRNA"):
+    def __init__(self, identifier, indices, parent_id, source=None, seq_name=None, strand='+',
+                 annotations=None, rna_type="mRNA"):
         self.rna_type = rna_type
         self.identifier = identifier
         self.indices = indices
@@ -63,25 +64,25 @@ class XRNA:
         """Returns the length of the RNA."""
         return length_of_segment(self.indices)
 
-    def adjust_indices(self, n, start_index=1):
+    def adjust_indices(self, increment_by, start_index=1):
         """Increments indices of RNA and its child features.
 
         Optionally, only indices occurring after start_index are incremented.
 
         Args:
-            n: integer by which to increment indices
+            increment_by: integer by which to increment indices
             start_index: optional coordinate before which no indices will be changed.
         """
         if self.indices[0] > start_index:
-            self.indices = [i + n for i in self.indices]
+            self.indices = [i + increment_by for i in self.indices]
         elif self.indices[1] > start_index:
-            self.indices[1] += n
+            self.indices[1] += increment_by
         if self.exon:
-            self.exon.adjust_indices(n, start_index)
+            self.exon.adjust_indices(increment_by, start_index)
         if self.cds:
-            self.cds.adjust_indices(n, start_index)
+            self.cds.adjust_indices(increment_by, start_index)
         for feature in self.other_features:
-            feature.adjust_indices(n, start_index)
+            feature.adjust_indices(increment_by, start_index)
 
     def number_of_gagflags(self):
         """Returns the number of flagged features contained by RNA.
@@ -96,7 +97,7 @@ class XRNA:
             total += 1
         return total
 
-    def create_start_and_stop_if_necessary(self, seq_object, strand):
+    def create_start_and_stop_if_needed(self, seq_object, strand):
         """Inspects child CDS and creates start/stop codons if appropriate.
 
         This is accomplished by examining the first and last three nucleotides
@@ -263,9 +264,9 @@ class XRNA:
             length = length_of_segment(index_pair)
             if length == 0:
                 continue
-            if shortest == None or length_of_segment(index_pair) < shortest:
+            if shortest is None or length_of_segment(index_pair) < shortest:
                 shortest = length
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 
@@ -312,14 +313,14 @@ class XRNA:
                 if this_intron == 0:
                     continue
                 if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
-                or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
+                        or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
                     raise Exception("Intron with negative length with {} on {} \
-strand with name: {}".format(index_pair[0] - last_end - 1,
-                                                 self.strand, self.seq_name))
-                if shortest == None or this_intron < shortest:
+                                     strand with name: {}".format(index_pair[0] - last_end - 1,
+                                                                  self.strand, self.seq_name))
+                if shortest is None or this_intron < shortest:
                     shortest = this_intron
             last_end = index_pair[1]
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 

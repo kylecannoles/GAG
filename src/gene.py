@@ -249,7 +249,7 @@ class Gene(object):
                     results["no_stop_no_start"] += 1
         return results
 
-    def remove_mrnas_with_internal_stops(self, seq_helper):
+    def rm_mrnas_with_internal_stops(self, seq_helper):
         """Removes child mRNAs that contain internal stop codons."""
         for mrna in self.mrnas:
             if seq_helper.mrna_contains_internal_stop(mrna):

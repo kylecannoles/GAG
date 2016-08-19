@@ -3,7 +3,7 @@
 import sys
 from src.seq_helper import SeqHelper
 
-class Sequence:
+class Sequence(object):
 
     def __init__(self, header="", bases=""):
         self.header = header
@@ -189,8 +189,7 @@ class Sequence:
         self.bases = self.bases[:start-1] + self.bases[stop:]
         # Adjust indices of remaining genes
         bases_removed = stop - start + 1
-        #TODO: figure out what this is supposed to do.
-        [g.adjust_indices(-bases_removed, start) for g in self.genes]
+        self.genes = [g.adjust_indices(-bases_removed, start) for g in self.genes]
         return genes_to_remove
 
     def get_subseq(self, start=1, stop=None):
@@ -220,10 +219,12 @@ class Sequence:
                 if a.indices == b.indices:
                     continue
                 # Check if a contains b
-                if a.indices[0] <= b.indices[0] and a.indices[1] >= b.indices[1] and not b in contained:
+                if (a.indices[0] <= b.indices[0] and a.indices[1] >= b.indices[1] and
+                        not b in contained):
                     contained.append(b)
                 # Check if b contains a
-                elif b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and not a in contained:
+                elif (b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and
+                      not a in contained):
                     contained.append(a)
         return contained
 
@@ -358,9 +359,9 @@ class Sequence:
             length = gene.get_shortest_exon()
             if length == 0:
                 continue
-            if shortest == None or length < shortest:
+            if shortest is None or length < shortest:
                 shortest = length
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 
@@ -384,9 +385,9 @@ class Sequence:
             length = gene.get_shortest_intron()
             if length == 0:
                 continue
-            if shortest == None or length < shortest:
+            if shortest is None or length < shortest:
                 shortest = length
-        if shortest == None:
+        if shortest is None:
             return 0
         return shortest
 
@@ -414,7 +415,7 @@ class Sequence:
         length = 0
         shortest = None
         for gene in self.genes:
-            if gene.length() < length or shortest == None:
+            if gene.length() < length or shortest is None:
                 length = gene.length()
                 shortest = gene
         return length
@@ -424,7 +425,7 @@ class Sequence:
         shortest = None
         for gene in self.genes:
             for mrna in gene.mrnas:
-                if mrna.length() < length or shortest == None:
+                if mrna.length() < length or shortest is None:
                     length = mrna.length()
                     shortest = mrna
         return length
@@ -434,7 +435,7 @@ class Sequence:
         shortest = None
         for gene in self.genes:
             for mrna in gene.mrnas:
-                if mrna.cds and (mrna.cds.length() < length or shortest == None):
+                if mrna.cds and (mrna.cds.length() < length or shortest is None):
                     length = mrna.cds.length()
                     shortest = mrna.cds
         return length
@@ -496,7 +497,7 @@ class Sequence:
 
 def overlap(indices1, indices2):
     """Returns a boolean indicating whether two pairs of indices overlap."""
-    if not (len(indices1) == 2 and len(indices2) ==2):
+    if not (len(indices1) == 2 and len(indices2) == 2):
         return False
     if indices1[0] >= indices2[0] and indices1[0] <= indices2[1]:
         return True

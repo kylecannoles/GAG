@@ -150,7 +150,7 @@ class GFFReader(object):
         return self.genes.values(), comments, invalid, ignored
 
 ## utility functions
-def get_parents_from_list_of_attributes(fields):
+def get_parents_from_attributes_ls(fields):
     """Returns a list of parent ids from a list of column 9 entries."""
     for field in fields:
         if "Parent" in field:
@@ -300,7 +300,7 @@ def extract_cds_args(line):
 def split_multi_parent_line(fields):
     """Returns a list of lines, one for each parent in a multiparent line."""
     split_attr = fields[8].split(";")
-    parents = get_parents_from_list_of_attributes(split_attr)
+    parents = get_parents_from_attributes_ls(split_attr)
     attr_without_parents = remove_parent_info_from_attr(split_attr)
     all_lines = []
     #import pdb; pdb.set_trace()
