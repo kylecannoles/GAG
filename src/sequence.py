@@ -225,7 +225,7 @@ class Sequence(object):
                     contained.append(b)
                 # Check if b contains a
                 elif (b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and
-                        a not in contained):
+                      a not in contained):
                     contained.append(a)
         return contained
 
