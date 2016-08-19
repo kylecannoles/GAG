@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import unittest
+
 from mock import Mock
+
 from src.seq_helper import SeqHelper
 
-class TestSeqHelper(unittest.TestCase):
 
+class TestSeqHelper(unittest.TestCase):
     def setUp(self):
         self.helper = SeqHelper("nnnGATTACAnnnnnNNNNNgattacaNNN")
 
@@ -70,7 +72,7 @@ class TestSeqHelper(unittest.TestCase):
         self.assertEquals(expected, self.helper.mrna_to_protein_fasta(mrna))
 
     def test_mrna_contains_internal_stop(self):
-        helper = SeqHelper("gattacaTAGgattaca") # TAG = stop codon
+        helper = SeqHelper("gattacaTAGgattaca")  # TAG = stop codon
         mrna = Mock()
         mrna.strand = '+'
         mrna.cds = Mock()
@@ -80,11 +82,13 @@ class TestSeqHelper(unittest.TestCase):
         # make sure the method catches it
         self.assertTrue(helper.mrna_contains_internal_stop(mrna))
 
+
 ##########################
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestSeqHelper))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()

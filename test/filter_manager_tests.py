@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 import unittest
+
 from mock import Mock
+
 from src.filter_manager import FilterManager
 
-class TestFilterManager(unittest.TestCase):
 
+class TestFilterManager(unittest.TestCase):
     def setUp(self):
         self.filter_mgr = FilterManager()
-        
+
     def test_modify_filter_arg(self):
         fake_seq = Mock()
         self.filter_mgr.filters['cds_shorter_than'] = Mock()
@@ -24,6 +26,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestFilterManager))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()

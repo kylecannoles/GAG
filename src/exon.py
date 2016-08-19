@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import copy
+
 from src.gene_part import GenePart, write_tbl_entry
 
-class Exon(GenePart):
 
+class Exon(GenePart):
     def __init__(self, **kwargs):
         kwargs['feature_type'] = 'exon'
         GenePart.__init__(self, **kwargs)

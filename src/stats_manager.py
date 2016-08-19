@@ -6,7 +6,6 @@
 ### then it can calculate stuff like longest seq, number of seqs, etc.
 
 class StatsManager(object):
-
     increment_stats = ["Total sequence length", "Number of genes",
                        "Number of mRNAs", "Number of exons", "Number of introns", "Number of CDS",
                        "Overlapping genes", "Contained genes", "CDS: complete",
@@ -116,17 +115,19 @@ class StatsManager(object):
             return format_columns(["Reference Genome", "Modified Genome"], stats_order,
                                   [self.ref_stats, self.alt_stats], 5)
 
+
 ## UTILITY FUNCTIONS
 
 def format_column(column, spacing):
     # First, get the uniform length
     longest = 0
     for item in column:
-        length = len(item)+spacing
+        length = len(item) + spacing
         if length > longest:
             longest = length
     # Now format
-    return [item+(' '*(longest-len(item))) for item in column]
+    return [item + (' ' * (longest - len(item))) for item in column]
+
 
 def format_columns(column_names, key_order, dicts, spacing=3):
     # Build key column
@@ -137,20 +138,21 @@ def format_columns(column_names, key_order, dicts, spacing=3):
     # Notes: Python automatically sorts dictionary contents by key, so this will work.
     # TODO: Nevertheless, make this code less hacky
     # TODO: ^dictionary does not sort contents.  added sorted(dicts)
-    #TODO: ^ my change broke a test, investigate
+    # TODO: ^ my change broke a test, investigate
 
     for i, dic in enumerate(dicts):
-        new_column = [column_names[i], '-'*len(column_names[i])]
+        new_column = [column_names[i], '-' * len(column_names[i])]
         new_column.extend([str(dic[key]) for key in key_order])
         columns.append(format_column(new_column, spacing))
 
     # Finally, stringify the table
     tbl_str = ''
-    for i in range(len(columns[0])): # For each row
-        for column in columns: # For each column
+    for i in range(len(columns[0])):  # For each row
+        for column in columns:  # For each column
             tbl_str += column[i]
         tbl_str += '\n'
     return tbl_str
+
 
 def validate_dicts(old, new):
     oldkeys = old.keys()
@@ -160,10 +162,8 @@ def validate_dicts(old, new):
             return False
     return True
 
+
 def format_percent(value):
     # value should be a float between 0 and 1
     trimmed = round(value, 3)
     return trimmed * 100
-
-
-

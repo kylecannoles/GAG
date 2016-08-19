@@ -3,13 +3,14 @@
 
 import os
 import sys
+
 from src.fasta_reader import FastaReader
-from src.gff_reader import GFFReader
 from src.filter_manager import FilterManager
+from src.gff_reader import GFFReader
 from src.stats_manager import StatsManager
 
-class Controller(object):
 
+class Controller(object):
     def __init__(self):
         self.seqs = []
         self.removed_features = []
@@ -242,7 +243,7 @@ class Controller(object):
         for seq in self.seqs:
             seq.create_starts_and_stops()
 
-## Reading in files
+            ## Reading in files
 
     def read_fasta(self, line):
         reader = FastaReader()
@@ -268,7 +269,7 @@ class Controller(object):
             for item in ignored:
                 ignored_file.write(item)
 
-## Clean up
+                ## Clean up
 
     def remove_empty_features(self, seq):
         """Removes any empty mRNAs or genes from a seq and adds them to self.removed_features."""
@@ -277,7 +278,7 @@ class Controller(object):
 
     def stats(self):
         if not self.seqs:
-            return "No sequences, can't provide statistics." #self.no_genome_message
+            return "No sequences, can't provide statistics."  # self.no_genome_message
         else:
             number_of_gagflags = 0
             # TODO have stats mgr handle "number of sequences"
@@ -290,7 +291,7 @@ class Controller(object):
             last_line = "(" + str(number_of_gagflags) + " features flagged)\n"
             return first_line + self.stats_mgr.summary() + last_line
 
-## Utility methods
+            ## Utility methods
 
     def add_gene(self, gene):
         for seq in self.seqs:
@@ -335,6 +336,7 @@ class Controller(object):
                 return True
         return False
 
+
 ## utility functions
 
 def read_bed_file(io_buffer):
@@ -354,6 +356,7 @@ def read_bed_file(io_buffer):
             trimlist.append(entry)
     return trimlist
 
+
 def read_annotation_file(io_buffer):
     annos = []
     for line in io_buffer:
@@ -363,4 +366,3 @@ def read_annotation_file(io_buffer):
         else:
             annos.append(splitline)
     return annos
-    

@@ -2,13 +2,12 @@
 
 import ast
 
-# All the filters
-from src.filters import MinCDSLengthFilter, MaxCDSLengthFilter, MinExonLengthFilter,\
-                        MaxExonLengthFilter, MinIntronLengthFilter, MaxIntronLengthFilter,\
-                        MinGeneLengthFilter, MaxGeneLengthFilter
+from src.filters import MinCDSLengthFilter, MaxCDSLengthFilter, MinExonLengthFilter, \
+    MaxExonLengthFilter, MinIntronLengthFilter, MaxIntronLengthFilter, \
+    MinGeneLengthFilter, MaxGeneLengthFilter
+
 
 class FilterManager(object):
-
     def __init__(self):
         # Build filters
         self.filters = dict()
@@ -29,4 +28,3 @@ class FilterManager(object):
 
     def get_filter_arg(self, filter_name):
         return self.filters[filter_name].arg
-

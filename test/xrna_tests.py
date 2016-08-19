@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import unittest
+
 from mock import Mock
+
 from src.xrna import XRNA
 
-class TestXRNA(unittest.TestCase):
 
+class TestXRNA(unittest.TestCase):
     def setUp(self):
         self.test_mrna0 = XRNA(identifier='bdor_foo', indices=[3734, 7436], strand='-',
                                parent_id=1)
@@ -133,7 +135,6 @@ class TestXRNA(unittest.TestCase):
         self.fake_cds.to_gff.assert_called_with("sctg_0080_0020", "maker")
         self.fake_start_codon.to_gff.assert_called_with("sctg_0080_0020", "maker")
 
-
     def test_indices_intersect_mrna_false(self):
         mrna = XRNA(identifier=1, indices=[10, 20], parent_id='foo')
         self.assertFalse(mrna.indices_intersect_mrna([5, 9]))
@@ -148,7 +149,7 @@ class TestXRNA(unittest.TestCase):
     def create_start_and_stop_if_needed(self):
         seq_object = Mock()
         cds = Mock()
-        cds.extract_sequence.return_value = 'atgtag' # startstop
+        cds.extract_sequence.return_value = 'atgtag'  # startstop
         cds.get_start_indices.return_value = 20
         cds.get_stop_indices.return_value = 40
         self.test_mrna0.cds = cds
@@ -161,7 +162,7 @@ class TestXRNA(unittest.TestCase):
     def test_create_start_and_stop_when_no_start_or_stop(self):
         seq_object = Mock()
         cds = Mock()
-        cds.extract_sequence.return_value = 'tagatg' # no start or stop
+        cds.extract_sequence.return_value = 'tagatg'  # no start or stop
         cds.get_start_indices.return_value = 20
         cds.get_stop_indices.return_value = 40
         self.test_mrna0.cds = cds
@@ -229,7 +230,6 @@ class TestXRNA(unittest.TestCase):
         self.test_mrna0.add_annotation('product', 'foo')
         self.assertTrue(self.test_mrna0.annotations_contain_product())
 
-
     ## STATS STUFF ##
 
     def set_fake_exon_indices(self):
@@ -292,8 +292,6 @@ class TestXRNA(unittest.TestCase):
         self.set_fake_exon_indices_reverse()
         self.assertEquals(4, self.test_mrna2.get_shortest_intron())
 
-
-
     def test_get_total_intron_length(self):
         self.set_fake_exon_indices()
         self.assertEquals(9, self.test_mrna1.get_total_intron_length())
@@ -309,12 +307,12 @@ class TestXRNA(unittest.TestCase):
         self.assertEquals(2, self.test_mrna2.get_num_introns())
 
 
-
 ##########################
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestXRNA))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()

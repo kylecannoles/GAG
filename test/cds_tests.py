@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import unittest
-from mock import Mock, PropertyMock
+
+from mock import Mock
+
 from src.cds import CDS
 
-class TestCDS(unittest.TestCase):
 
+class TestCDS(unittest.TestCase):
     def setUp(self):
         self.test_indices1 = [3734, 4034]
         self.extra_indices = [[4092, 4332], [4399, 5185], [5249, 6565], [6630, 7436]]
@@ -14,8 +16,10 @@ class TestCDS(unittest.TestCase):
         self.test_phase1 = 0
         self.extra_phases = [2, 1, 0, 0]
         test_parent_id1 = 2
-        self.test_cds0 = CDS(identifier=test_identifier1, indices=self.test_indices1, score=None, phase=self.test_phase1, strand='-', parent_id=test_parent_id1)
-        self.test_cds1 = CDS(identifier=test_identifier1, indices=self.test_indices1, score=None, phase=self.test_phase1, strand='+', parent_id=test_parent_id1)
+        self.test_cds0 = CDS(identifier=test_identifier1, indices=self.test_indices1, score=None,
+                             phase=self.test_phase1, strand='-', parent_id=test_parent_id1)
+        self.test_cds1 = CDS(identifier=test_identifier1, indices=self.test_indices1, score=None,
+                             phase=self.test_phase1, strand='+', parent_id=test_parent_id1)
         for ind_pair in self.extra_indices:
             self.test_cds1.add_indices(ind_pair)
         for ident in self.extra_identifiers:
@@ -62,7 +66,7 @@ class TestCDS(unittest.TestCase):
         self.assertEquals('CDS', self.test_cds0.__class__.__name__)
         # should also be able to construct w/o all the params...
         empty_cds = CDS()
-        self.assertEquals('CDS', empty_cds.feature_type) 
+        self.assertEquals('CDS', empty_cds.feature_type)
 
     def test_add_indices(self):
         for ind_pair in self.extra_indices:
@@ -82,7 +86,7 @@ class TestCDS(unittest.TestCase):
 
     def test_sort_attributes(self):
         cds = CDS()
-        cds.indices = [[25, 30], [5, 10]] # out of order!
+        cds.indices = [[25, 30], [5, 10]]  # out of order!
         cds.identifier = ["cds2", "cds1"]
         cds.phase = [1, 0]
         self.assertEquals("cds1", cds.identifier[1])
@@ -94,8 +98,8 @@ class TestCDS(unittest.TestCase):
         self.assertEquals(0, cds.phase[0])
 
     def test_sort_attributes_negative_strand(self):
-        cds = CDS(strand = '-')
-        cds.indices = [[5, 10], [25, 30]] # out of order (for negative)!
+        cds = CDS(strand='-')
+        cds.indices = [[5, 10], [25, 30]]  # out of order (for negative)!
         cds.identifier = ["cds1", "cds2"]
         cds.phase = [0, 1]
         self.assertEquals("cds2", cds.identifier[1])
@@ -123,11 +127,12 @@ class TestCDS(unittest.TestCase):
         expected4 = "sctg_0080_0020\tmaker\tCDS\t5249\t6565\t.\t+\t0\tID=11;Parent=2;foo=dog\n"
         expected5 = "sctg_0080_0020\tmaker\tCDS\t6630\t7436\t.\t+\t0\tID=12;Parent=2;foo=dog\n"
         expected = expected1 + expected2 + expected3 + expected4 + expected5
-        self.test_cds1.add_annotation('foo','dog') # Make sure our annotations are working
+        self.test_cds1.add_annotation('foo', 'dog')  # Make sure our annotations are working
         actual = self.test_cds1.to_gff(seq_name="sctg_0080_0020", source="maker")
         self.assertEquals(expected, actual)
         # what if identifier, parent_id are strings? does it matter?
-        test_cds2 = CDS(identifier='foo1', indices=self.test_indices1, score=None, strand='+', phase=self.test_phase1, parent_id='bar7')
+        test_cds2 = CDS(identifier='foo1', indices=self.test_indices1, score=None, strand='+',
+                        phase=self.test_phase1, parent_id='bar7')
         extra_identifiers2 = ['foo2', 'foo3', 'foo4', 'foo5']
         for ind_pair in self.extra_indices:
             test_cds2.add_indices(ind_pair)
@@ -180,7 +185,7 @@ class TestCDS(unittest.TestCase):
         expected += "4034\t>3734\n"
         expected += "\t\t\tcodon_start\t2\n"
         # shouldn't look at phase[0] for negative strand!
-        self.test_cds1.phase[0] = 2 # should ignore this.
+        self.test_cds1.phase[0] = 2  # should ignore this.
         self.test_cds1.phase[4] = 1
         self.test_cds1.strand = '-'
         self.assertEquals(self.test_cds1.to_tbl(False, False), expected)
@@ -191,6 +196,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestCDS))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()

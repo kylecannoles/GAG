@@ -3,11 +3,12 @@
 import math
 import sys
 
+
 def length_of_segment(index_pair):
     return math.fabs(index_pair[1] - index_pair[0]) + 1
 
-class Gene(object):
 
+class Gene(object):
     def __init__(self, seq_name, source, indices, strand, identifier, name="", annotations=None,
                  score=None):
         self.seq_name = seq_name
@@ -54,7 +55,7 @@ class Gene(object):
             self.mrnas.remove(to_remove)
             self.removed_mrnas.append(to_remove)
             return True
-        return False # Return false if mrna wasn't removed
+        return False  # Return false if mrna wasn't removed
 
     def remove_mrnas_from_list(self, bad_mrnas):
         to_remove = []
@@ -369,6 +370,3 @@ class Gene(object):
         for mrna in self.mrnas:
             output += mrna.to_tbl()
         return output
-
-
-

@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 import math
-from src.gene_part import GenePart
+
 import src.translator as translate
+from src.gene_part import GenePart
+
 
 def length_of_segment(index_pair):
     return math.fabs(index_pair[1] - index_pair[0]) + 1
 
-class XRNA(object):
 
+class XRNA(object):
     def __init__(self, identifier, indices, parent_id, source=None, seq_name=None, strand='+',
                  annotations=None, rna_type="mRNA"):
         self.rna_type = rna_type
@@ -38,7 +40,7 @@ class XRNA(object):
 
         String contains the RNA's identifier and the number of features it contains.
         """
-        result = self.rna_type+" (ID=" + str(self.identifier) + ") containing "
+        result = self.rna_type + " (ID=" + str(self.identifier) + ") containing "
         if self.exon:
             result += "Exon, "
         if self.cds:
@@ -149,16 +151,16 @@ class XRNA(object):
         # TODO figure out naming scheme...
         start_id = self.identifier + ":start"
         start_parent_id = self.identifier
-        start = GenePart(feature_type='start_codon', identifier=start_id, \
-                indices=indices, parent_id=start_parent_id, strand=self.strand)
+        start = GenePart(feature_type='start_codon', identifier=start_id,
+                         indices=indices, parent_id=start_parent_id, strand=self.strand)
         self.add_other_feature(start)
 
     def add_stop_codon(self, indices):
         """Adds a stop_codon GenePart to MRNA.other_features"""
         stop_id = self.identifier + ":stop"
         stop_parent_id = self.identifier
-        stop = GenePart(feature_type='stop_codon', identifier=stop_id, \
-                indices=indices, parent_id=stop_parent_id, strand=self.strand)
+        stop = GenePart(feature_type='stop_codon', identifier=stop_id,
+                        indices=indices, parent_id=stop_parent_id, strand=self.strand)
         self.add_other_feature(stop)
 
     def has_start(self):
@@ -229,18 +231,18 @@ class XRNA(object):
                 output += "\t\t\tproduct\t" + self.annotations['product'][0] + "\n"
             else:
                 output += "\t\t\tproduct\thypothetical protein\n"
-            output += "\t\t\tprotein_id\tgnl|ncbi|"+self.identifier+"\n"
-            output += "\t\t\ttranscript_id\tgnl|ncbi|"+self.identifier+"_mrna\n"
+            output += "\t\t\tprotein_id\tgnl|ncbi|" + self.identifier + "\n"
+            output += "\t\t\ttranscript_id\tgnl|ncbi|" + self.identifier + "_mrna\n"
         if self.cds:
             output += self.cds.to_tbl(has_start, has_stop)
             # Write the annotations
             for key in self.annotations.keys():
                 for value in self.annotations[key]:
-                    output += '\t\t\t'+key+'\t'+value+'\n'
+                    output += '\t\t\t' + key + '\t' + value + '\n'
             if not self.annotations_contain_product():
                 output += "\t\t\tproduct\thypothetical protein\n"
-            output += "\t\t\tprotein_id\tgnl|ncbi|"+self.identifier+"\n"
-            output += "\t\t\ttranscript_id\tgnl|ncbi|"+self.identifier+"_mrna\n"
+            output += "\t\t\tprotein_id\tgnl|ncbi|" + self.identifier + "\n"
+            output += "\t\t\ttranscript_id\tgnl|ncbi|" + self.identifier + "_mrna\n"
         return output
 
     ## STATS STUFF ##
@@ -313,7 +315,7 @@ class XRNA(object):
                 if this_intron == 0:
                     continue
                 if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
-                        or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
+                    or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
                     raise Exception("Intron with negative length with {} on {} \
                                      strand with name: {}".format(index_pair[0] - last_end - 1,
                                                                   self.strand, self.seq_name))
@@ -345,4 +347,3 @@ class XRNA(object):
 
     def annotations_contain_product(self):
         return 'product' in self.annotations.keys()
-

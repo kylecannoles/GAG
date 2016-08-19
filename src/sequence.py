@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import sys
+
 from src.seq_helper import SeqHelper
 
-class Sequence(object):
 
+class Sequence(object):
     def __init__(self, header="", bases=""):
         self.header = header
         self.bases = bases
@@ -44,7 +45,7 @@ class Sequence(object):
             self.genes.remove(to_remove)
             self.removed_genes.append(to_remove)
             return True
-        return False # Return false if gene wasn't removed
+        return False  # Return false if gene wasn't removed
 
     def remove_from_list(self, bad_list):
         removed_features = []
@@ -140,13 +141,13 @@ class Sequence(object):
         length = len(self.bases)
         terminal_ns = self.how_many_Ns_backward(length)
         if terminal_ns:
-            self.trim_region(length-terminal_ns+1, length)
+            self.trim_region(length - terminal_ns + 1, length)
 
     # Given a position in the sequence, returns the number of Ns
     # from that position forward
     # (returns 0 if the base at that position is not N)
     def how_many_Ns_forward(self, position):
-        index = position-1
+        index = position - 1
         if self.bases[index] != 'N' and self.bases[index] != 'n':
             return 0
         else:
@@ -163,7 +164,7 @@ class Sequence(object):
     # from that position backward
     # (returns 0 if the base at that position is not N)
     def how_many_Ns_backward(self, position):
-        index = position-1
+        index = position - 1
         if self.bases[index] != 'N' and self.bases[index] != 'n':
             return 0
         else:
@@ -179,14 +180,14 @@ class Sequence(object):
     def trim_region(self, start, stop):
         """Remove bases from start to stop; remove and return affected genes"""
         if stop > len(self.bases):
-            sys.stderr.write("Sequence.trim called on sequence that is too short;"+\
-                    " doing nothing.\n")
+            sys.stderr.write("Sequence.trim called on sequence that is too short;" + \
+                             " doing nothing.\n")
             return
         # Remove any genes that are overlap the trimmed region
         genes_to_remove = [g for g in self.genes if overlap([start, stop], g.indices)]
         self.genes = [g for g in self.genes if g not in genes_to_remove]
         # Remove bases from sequence
-        self.bases = self.bases[:start-1] + self.bases[stop:]
+        self.bases = self.bases[:start - 1] + self.bases[stop:]
         # Adjust indices of remaining genes
         bases_removed = stop - start + 1
         self.genes = [g.adjust_indices(-bases_removed, start) for g in self.genes]
@@ -197,7 +198,7 @@ class Sequence(object):
             stop = len(self.bases)
         if stop > len(self.bases):
             return ""
-        return self.bases[start-1:stop]
+        return self.bases[start - 1:stop]
 
     def remove_mrnas_with_internal_stops(self):
         helper = SeqHelper(self.bases)
@@ -214,7 +215,7 @@ class Sequence(object):
     def get_contained_genes(self):
         contained = []
         for i, a in enumerate(self.genes):
-            for b in self.genes[i+1:]:
+            for b in self.genes[i + 1:]:
                 # Skip duplicate indices
                 if a.indices == b.indices:
                     continue
@@ -224,14 +225,14 @@ class Sequence(object):
                     contained.append(b)
                 # Check if b contains a
                 elif (b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and
-                      not a in contained):
+                          not a in contained):
                     contained.append(a)
         return contained
 
     def get_overlapping_genes(self):
         contained = []
         for i, a in enumerate(self.genes):
-            for b in self.genes[i+1:]:
+            for b in self.genes[i + 1:]:
                 if a.indices[1] >= b.indices[0] and a.indices[0] <= b.indices[1]:
                     if not a in contained:
                         contained.append(a)
@@ -296,8 +297,8 @@ class Sequence(object):
             result += gene.to_gff(True)
         return result
 
-###################################################################################################
-# Statsy type stuff
+    ###################################################################################################
+    # Statsy type stuff
 
     def get_num_mrna(self):
         count = 0
@@ -320,8 +321,8 @@ class Sequence(object):
         return count
 
     def get_cds_partial_info(self):
-        results = {"CDS: complete": 0, "CDS: start, no stop": 0,\
-                "CDS: stop, no start": 0, "CDS: no stop, no start": 0}
+        results = {"CDS: complete": 0, "CDS: start, no stop": 0,
+                   "CDS: stop, no start": 0, "CDS: no stop, no start": 0}
         for gene in self.genes:
             partial_info = gene.get_partial_info()
             results["CDS: complete"] += partial_info["complete"]
@@ -494,6 +495,7 @@ class Sequence(object):
         stats["Total CDS length"] = int(self.get_total_cds_length())
 
         return stats
+
 
 def overlap(indices1, indices2):
     """Returns a boolean indicating whether two pairs of indices overlap."""

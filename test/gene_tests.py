@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import unittest
+
 from mock import Mock
+
 from src.gene import Gene
 
-class TestGene(unittest.TestCase):
 
+class TestGene(unittest.TestCase):
     def setUp(self):
         self.test_gene0 = Gene(seq_name="sctg_0080_0020", source="maker", indices=[3734, 7436],
                                strand='+', identifier=1)
@@ -291,7 +293,6 @@ class TestGene(unittest.TestCase):
         expected = "<1\t>50\tgene\n\t\t\tlocus_tag\tfoo_gene_1\nmrna1_to_tbl...\nmrna2_to_tbl...\n"
         self.assertEquals(gene.to_tbl(), expected)
 
-
     def test_to_tbl_positive_with_name(self):
         gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
                     identifier="foo_gene_1", name="wtfg")
@@ -306,7 +307,7 @@ class TestGene(unittest.TestCase):
         expected = ("1\t50\tgene\n"
                     "\t\t\tgene\twtfg\n"
                     "\t\t\tlocus_tag\tfoo_gene_1\nmrna1_to_tbl...\n"
-                    "mrna2_to_tbl...\n") # these are concatinated into one string by python
+                    "mrna2_to_tbl...\n")  # these are concatinated into one string by python
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_to_tbl_negative(self):
@@ -328,8 +329,8 @@ class TestGene(unittest.TestCase):
 
     def test_gene_initialized_with_annotations(self):
         newgene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
-                       identifier="foo_gene_1",\
-                annotations={"bar": ["cat"]})
+                       identifier="foo_gene_1",
+                       annotations={"bar": ["cat"]})
         self.assertTrue(newgene.annotations)
         self.assertEquals(1, len(newgene.annotations.keys()))
 
@@ -339,6 +340,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestGene))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()
