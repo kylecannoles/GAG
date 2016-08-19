@@ -95,10 +95,12 @@ class TestXRNA(unittest.TestCase):
         self.assertEquals(expected, str(self.test_mrna1))
 
     def test_cds_to_gff(self):
+        # noinspection PyUnusedLocal
         foo = self.test_mrna1.cds_to_gff("foo_seq", "maker")
         self.fake_cds.to_gff.assert_called_with("foo_seq", "maker")
 
     def test_cds_to_tbl(self):
+        # noinspection PyUnusedLocal
         foo = self.test_mrna1.cds_to_tbl()
         self.fake_cds.to_tbl.assert_called_with(False, False)
 
@@ -230,7 +232,7 @@ class TestXRNA(unittest.TestCase):
         self.test_mrna0.add_annotation('product', 'foo')
         self.assertTrue(self.test_mrna0.annotations_contain_product())
 
-    ## STATS STUFF ##
+    # STATS STUFF
 
     def set_fake_exon_indices(self):
         self.fake_exon.indices = [[1, 5], [11, 16], [21, 27]]
@@ -309,9 +311,9 @@ class TestXRNA(unittest.TestCase):
 
 ##########################
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestXRNA))
-    return suite
+    _suite = unittest.TestSuite()
+    _suite.addTest(unittest.makeSuite(TestXRNA))
+    return _suite
 
 
 if __name__ == '__main__':

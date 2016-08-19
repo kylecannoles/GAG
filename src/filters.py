@@ -2,6 +2,7 @@
 
 ###################################################################################################
 
+
 class MinCDSLengthFilter(object):
     def __init__(self, min_length=0):
         self.arg = min_length
@@ -45,7 +46,7 @@ class MaxCDSLengthFilter(object):
         count = 0
         for gene in seq.genes:
             for mrna in gene.mrnas:
-                if mrna.cds and self.arg > 0 and mrna.cds.length() > self.arg:
+                if mrna.cds and 0 < self.arg < mrna.cds.length():
                     mrna.cds.add_annotation('gag_flag', "cds_max_length:" + str(self.arg))
                     mrna.death_flagged = True  # Destroy the mRNA that the cds lives on?
             to_remove = [mrna for mrna in gene.mrnas if mrna.death_flagged]
@@ -115,7 +116,7 @@ class MaxExonLengthFilter(object):
         count = 0
         for gene in seq.genes:
             for mrna in gene.mrnas:
-                if mrna.exon and self.arg > 0 and mrna.get_longest_exon() > self.arg:
+                if mrna.exon and 0 < self.arg < mrna.get_longest_exon():
                     mrna.exon.add_annotation("gag_flag", "exon_max_length:" + str(self.arg))
                     mrna.death_flagged = True  # Destroy the mRNA that the exon lives on?
             to_remove = [mrna for mrna in gene.mrnas if mrna.death_flagged]
@@ -184,7 +185,7 @@ class MaxIntronLengthFilter(object):
         count = 0
         for gene in seq.genes:
             for mrna in gene.mrnas:
-                if mrna.exon and self.arg > 0 and mrna.get_longest_intron() > self.arg:
+                if mrna.exon and 0 < self.arg < mrna.get_longest_intron():
                     mrna.exon.add_annotation("gag_flag", "intron_max_length:" + str(self.arg))
                     mrna.death_flagged = True  # Destroy the mRNA that the intron lives on?
             to_remove = [mrna for mrna in gene.mrnas if mrna.death_flagged]
@@ -252,7 +253,7 @@ class MaxGeneLengthFilter(object):
     def apply(self, seq):
         count = 0
         for gene in seq.genes:
-            if self.arg > 0 and gene.length() > self.arg:
+            if 0 < self.arg < gene.length():
                 gene.add_annotation("gag_flag", "gene_max_length:" + str(self.arg))
                 gene.death_flagged = True  # Destroy the gene?
         for gene in seq.genes:

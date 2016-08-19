@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 
-### TODO TODO TODO
-### ok, update should take a list of seqs instead of a single seq
-### then it can calculate stuff like longest seq, number of seqs, etc.
+# TODO
+# ok, update should take a list of seqs instead of a single seq
+# then it can calculate stuff like longest seq, number of seqs, etc.
 
 class StatsManager(object):
     increment_stats = ["Total sequence length", "Number of genes",
@@ -116,7 +116,7 @@ class StatsManager(object):
                                   [self.ref_stats, self.alt_stats], 5)
 
 
-## UTILITY FUNCTIONS
+# UTILITY FUNCTIONS
 
 def format_column(column, spacing):
     # First, get the uniform length

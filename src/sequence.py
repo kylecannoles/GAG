@@ -134,19 +134,19 @@ class Sequence(object):
 
     def remove_terminal_ns(self):
         # Remove any Ns at the beginning of the sequence
-        initial_ns = self.how_many_Ns_forward(1)
+        initial_ns = self.how_many_n_forward(1)
         if initial_ns:
             self.trim_region(1, initial_ns)
         # Remove any Ns at the end of the sequence
         length = len(self.bases)
-        terminal_ns = self.how_many_Ns_backward(length)
+        terminal_ns = self.how_many_n_backward(length)
         if terminal_ns:
             self.trim_region(length - terminal_ns + 1, length)
 
     # Given a position in the sequence, returns the number of Ns
     # from that position forward
     # (returns 0 if the base at that position is not N)
-    def how_many_Ns_forward(self, position):
+    def how_many_n_forward(self, position):
         index = position - 1
         if self.bases[index] != 'N' and self.bases[index] != 'n':
             return 0
@@ -163,7 +163,7 @@ class Sequence(object):
     # Given a position in the fasta, returns the number of Ns
     # from that position backward
     # (returns 0 if the base at that position is not N)
-    def how_many_Ns_backward(self, position):
+    def how_many_n_backward(self, position):
         index = position - 1
         if self.bases[index] != 'N' and self.bases[index] != 'n':
             return 0
@@ -180,7 +180,7 @@ class Sequence(object):
     def trim_region(self, start, stop):
         """Remove bases from start to stop; remove and return affected genes"""
         if stop > len(self.bases):
-            sys.stderr.write("Sequence.trim called on sequence that is too short;" + \
+            sys.stderr.write("Sequence.trim called on sequence that is too short;" +
                              " doing nothing.\n")
             return
         # Remove any genes that are overlap the trimmed region
@@ -221,11 +221,11 @@ class Sequence(object):
                     continue
                 # Check if a contains b
                 if (a.indices[0] <= b.indices[0] and a.indices[1] >= b.indices[1] and
-                        not b in contained):
+                            b not in contained):
                     contained.append(b)
                 # Check if b contains a
                 elif (b.indices[0] <= a.indices[0] and b.indices[1] >= a.indices[1] and
-                          not a in contained):
+                              a not in contained):
                     contained.append(a)
         return contained
 
@@ -234,9 +234,9 @@ class Sequence(object):
         for i, a in enumerate(self.genes):
             for b in self.genes[i + 1:]:
                 if a.indices[1] >= b.indices[0] and a.indices[0] <= b.indices[1]:
-                    if not a in contained:
+                    if a not in contained:
                         contained.append(a)
-                    if not b in contained:
+                    if b not in contained:
                         contained.append(b)
         return contained
 
@@ -297,7 +297,7 @@ class Sequence(object):
             result += gene.to_gff(True)
         return result
 
-    ###################################################################################################
+    ##############################################################################################
     # Statsy type stuff
 
     def get_num_mrna(self):
@@ -501,9 +501,9 @@ def overlap(indices1, indices2):
     """Returns a boolean indicating whether two pairs of indices overlap."""
     if not (len(indices1) == 2 and len(indices2) == 2):
         return False
-    if indices1[0] >= indices2[0] and indices1[0] <= indices2[1]:
+    if indices2[0] <= indices1[0] <= indices2[1]:
         return True
-    elif indices1[1] >= indices2[0] and indices1[1] <= indices2[1]:
+    elif indices2[0] <= indices1[1] <= indices2[1]:
         return True
     else:
         return False

@@ -218,7 +218,7 @@ class Controller(object):
             # sequence, trim from the end so indices don't get messed up
             to_trim_this_seq = [x for x in trimlist if x[0] == seq.header]
             to_trim_this_seq = sorted(to_trim_this_seq,
-                                      key=lambda entry: entry[2], reverse=True)
+                                      key=lambda _entry: _entry[2], reverse=True)
             for entry in to_trim_this_seq:
                 removed_genes = seq.trim_region(entry[1], entry[2])
                 self.removed_features.extend(removed_genes)
@@ -243,7 +243,7 @@ class Controller(object):
         for seq in self.seqs:
             seq.create_starts_and_stops()
 
-            ## Reading in files
+    # Reading in files
 
     def read_fasta(self, line):
         reader = FastaReader()
@@ -269,7 +269,7 @@ class Controller(object):
             for item in ignored:
                 ignored_file.write(item)
 
-                ## Clean up
+    # Clean up
 
     def remove_empty_features(self, seq):
         """Removes any empty mRNAs or genes from a seq and adds them to self.removed_features."""
@@ -291,7 +291,7 @@ class Controller(object):
             last_line = "(" + str(number_of_gagflags) + " features flagged)\n"
             return first_line + self.stats_mgr.summary() + last_line
 
-            ## Utility methods
+    # Utility methods
 
     def add_gene(self, gene):
         for seq in self.seqs:
@@ -337,7 +337,7 @@ class Controller(object):
         return False
 
 
-## utility functions
+# utility functions
 
 def read_bed_file(io_buffer):
     trimlist = []

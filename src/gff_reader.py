@@ -27,8 +27,8 @@ class GFFReader(object):
         if ltype == 'gene' or ltype == 'pseudogene':
             self.process_gene_line(line, ltype)
             return True
-        elif ltype == 'mRNA' or ltype == 'tRNA' or ltype == 'rRNA' or ltype == 'ncRNA' or \
-                        ltype == 'miRNA' or ltype == 'snRNA':
+        elif (ltype == 'mRNA' or ltype == 'tRNA' or ltype == 'rRNA' or ltype == 'ncRNA' or
+                      ltype == 'miRNA' or ltype == 'snRNA'):
             self.process_rna_line(line, ltype)
             return True
         elif ltype == 'CDS':
@@ -156,7 +156,7 @@ class GFFReader(object):
         return self.genes.values(), comments, invalid, ignored
 
 
-## utility functions
+# utility functions
 def get_parents_from_attributes_ls(fields):
     """Returns a list of parent ids from a list of column 9 entries."""
     for field in fields:
@@ -194,9 +194,7 @@ def parse_attributes(attr):
             result['name'] = value
         elif key == "Parent":
             result['parent_id'] = value
-        elif (key == "Dbxref" or
-                      key == "Ontology_term" or
-                      key == "product"):
+        elif key == "Dbxref" or key == "Ontology_term" or key == "product":
             if key in annotations.keys():
                 # allow for annotations in the style of "Dbxref=PFAM:foo,PRINTS:bar"
                 annotations[key].extend(value.split(','))
@@ -340,14 +338,14 @@ def validate_line(line):
     if len(splitline) is not 9:
         print "not enough columns: " + line
         return []
-    if not "ID" in splitline[8]:
+    if "ID" not in splitline[8]:
         print "No ID"
         return []
     if int(splitline[3]) > int(splitline[4]):
         print "stop greater than start"
         return []
     # Everything except genes must have parent id
-    if not "Parent" in splitline[8] and \
+    if "Parent" not in splitline[8] and \
             not (splitline[2] == "gene" or splitline[2] == 'pseudogene'):
         print "no parent"
         return []

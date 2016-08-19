@@ -131,10 +131,10 @@ class XRNA(object):
         self_start = self.indices[0]
         self_end = self.indices[1]
         # mrna contains beginning of indices
-        if self_start <= begin and self_end >= begin:
+        if self_start <= begin <= self_end:
             return True
         # mrna contains end of indices
-        elif self_start <= end and self_end >= end:
+        elif self_start <= end <= self_end:
             return True
         # indices contain entire mrna
         elif begin <= self_start and end >= self_end:
@@ -245,7 +245,7 @@ class XRNA(object):
             output += "\t\t\ttranscript_id\tgnl|ncbi|" + self.identifier + "_mrna\n"
         return output
 
-    ## STATS STUFF ##
+    # STATS STUFF
 
     def get_longest_exon(self):
         """Returns length of longest exon contained on RNA."""
@@ -315,7 +315,7 @@ class XRNA(object):
                 if this_intron == 0:
                     continue
                 if ((self.strand == '+' and (index_pair[0] - last_end - 1) < 0)
-                    or ((self.strand == '-' and (index_pair[0] - last_end - 1) > 0))):
+                    or (self.strand == '-' and (index_pair[0] - last_end - 1) > 0)):
                     raise Exception("Intron with negative length with {} on {} \
                                      strand with name: {}".format(index_pair[0] - last_end - 1,
                                                                   self.strand, self.seq_name))

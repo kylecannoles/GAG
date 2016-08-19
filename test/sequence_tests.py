@@ -85,18 +85,18 @@ class TestSequence(unittest.TestCase):
 
     def test_how_many_Ns_forward(self):
         badseq = Sequence('seq1', 'NNnNNGATTACA')
-        self.assertEqual(5, badseq.how_many_Ns_forward(1))
+        self.assertEqual(5, badseq.how_many_n_forward(1))
 
     def test_how_many_Ns_forward_returns_zero_if_no_Ns(self):
         badseq = Sequence('seq2', 'GATTACA')
-        self.assertEqual(0, badseq.how_many_Ns_forward(3))
+        self.assertEqual(0, badseq.how_many_n_forward(3))
 
     def test_how_many_Ns_backward(self):
         badseq = Sequence('seq3', 'gattaNnN')
-        self.assertEqual(3, badseq.how_many_Ns_backward(8))
+        self.assertEqual(3, badseq.how_many_n_backward(8))
 
     def test_how_many_Ns_backward_returns_zero_if_no_Ns(self):
-        self.assertEqual(0, self.seq1.how_many_Ns_backward(3))
+        self.assertEqual(0, self.seq1.how_many_n_backward(3))
 
     def test_number_of_gagflags(self):
         gene1, gene2 = Mock(), Mock()
@@ -187,6 +187,7 @@ class TestSequence(unittest.TestCase):
         self.seq1.genes = [Mock(), Mock()]
         self.seq1.genes[0].remove_empty_mrnas.return_value = []
         self.seq1.genes[1].remove_empty_mrnas.return_value = []
+        # noinspection PyUnusedLocal
         removed_mrnas = self.seq1.remove_empty_mrnas()
         self.seq1.genes[0].remove_empty_mrnas.assert_called_with()
         self.seq1.genes[1].remove_empty_mrnas.assert_called_with()
@@ -305,6 +306,7 @@ class TestSequence(unittest.TestCase):
         mockgene = Mock()
         mockgene.contains_mrna.return_value = True
         self.seq1.genes = [mockgene]
+        # noinspection PyUnusedLocal
         foo = self.seq1.cds_to_gff("foo_mrna")
         mockgene.cds_to_gff.assert_called_with("seq1", "foo_mrna")
 
@@ -312,6 +314,7 @@ class TestSequence(unittest.TestCase):
         mockgene = Mock()
         mockgene.contains_mrna.return_value = True
         self.seq1.genes = [mockgene]
+        # noinspection PyUnusedLocal
         foo = self.seq1.cds_to_tbl("foo_mrna")
         mockgene.cds_to_tbl.assert_called_with("foo_mrna")
 
@@ -375,9 +378,9 @@ class TestSequence(unittest.TestCase):
 
 ##########################
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestSequence))
-    return suite
+    _suite = unittest.TestSuite()
+    _suite.addTest(unittest.makeSuite(TestSequence))
+    return _suite
 
 
 if __name__ == '__main__':

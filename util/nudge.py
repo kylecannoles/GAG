@@ -12,9 +12,9 @@ def overlap(indices1, indices2):
     """Returns a boolean indicating whether two pairs of indices overlap."""
     if not (len(indices1) == 2 and len(indices2) == 2):
         return False
-    if indices1[0] >= indices2[0] and indices1[0] <= indices2[1]:
+    if indices2[0] <= indices1[0] <= indices2[1]:
         return True
-    elif indices1[1] >= indices2[0] and indices1[1] <= indices2[1]:
+    elif indices2[0] <= indices1[1] <= indices2[1]:
         return True
     else:
         return False
@@ -49,9 +49,8 @@ def read_bed_file(filename):
 
 def fail_if_overlap(start, stop, trim_indices):
     if overlap([start, stop], trim_indices):
-        sys.stderr.write("Collision! start/stop = %d/%d; \
-                trim start/stop = %d/%d\n" % \
-                         (start, stop, trim_indices[0], trim_indices[1]))
+        sys.stderr.write("Collision! start/stop = %d/%d; trim start/stop = %d/%d\n" % (
+            start, stop, trim_indices[0], trim_indices[1]))
         sys.exit()
 
 
@@ -77,16 +76,15 @@ def update_agp(agp_filename, trimlist):
                 fail_if_overlap(start, stop, trim_indices)
                 # Fail spectacularly if trim region *contains* start->stop region
                 if contains(trim_indices, [start, stop]):
-                    sys.stderr.write("Collision! start/stop = %d/%d; \
-                            trim start/stop = %d/%d\n" % \
-                                     (start, stop, trim_start, trim_stop))
+                    sys.stderr.write("Collision! start/stop = %d/%d; trim start/stop = %d/%d\n" % (
+                        start, stop, trim_start, trim_stop))
                     sys.exit()
                 # Trim region comes before our indices -- trim!
                 bases_to_trim = trim_stop - trim_start + 1
                 # Only adjust start if the trim region comes before it
                 if trim_stop <= start:
-                    start = start - bases_to_trim
-                stop = stop - bases_to_trim
+                    start -= bases_to_trim
+                stop -= bases_to_trim
                 fields[1] = str(start)
                 fields[2] = str(stop)
             print("\t".join(fields))
@@ -117,16 +115,15 @@ def update_gff(gff_filename, trimlist):
                 fail_if_overlap(start, stop, trim_indices)
                 # Fail spectacularly if trim region *contains* start->stop region
                 if contains(trim_indices, [start, stop]):
-                    sys.stderr.write("Collision! start/stop = %d/%d; \
-                            trim start/stop = %d/%d\n" % \
-                                     (start, stop, trim_start, trim_stop))
+                    sys.stderr.write("Collision! start/stop = %d/%d; trim start/stop = %d/%d\n" % (
+                        start, stop, trim_start, trim_stop))
                     sys.exit()
                 # Trim region comes before our indices -- trim!
                 bases_to_trim = trim_stop - trim_start + 1
                 # Only adjust start if the trim region comes before it
                 if trim_stop <= start:
-                    start = start - bases_to_trim
-                stop = stop - bases_to_trim
+                    start -= bases_to_trim
+                stop -= bases_to_trim
                 fields[3] = str(start)
                 fields[4] = str(stop)
             print("\t".join(fields))

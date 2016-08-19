@@ -159,6 +159,7 @@ class TestGene(unittest.TestCase):
 
     def test_cds_to_gff(self):
         self.fake_mrna1.identifier = "foo_mrna"
+        # noinspection PyUnusedLocal
         foo = self.test_gene1.cds_to_gff("foo_seq", "foo_mrna")
         self.fake_mrna1.cds_to_gff.assert_called_with("foo_seq", "maker")
 
@@ -169,6 +170,7 @@ class TestGene(unittest.TestCase):
 
     def test_cds_to_tbl(self):
         self.fake_mrna1.identifier = "foo_mrna"
+        # noinspection PyUnusedLocal
         foo = self.fake_mrna1.cds_to_tbl()
         self.fake_mrna1.cds_to_tbl.assert_called_with()
 
@@ -337,9 +339,9 @@ class TestGene(unittest.TestCase):
 
 ##########################
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestGene))
-    return suite
+    _suite = unittest.TestSuite()
+    _suite.addTest(unittest.makeSuite(TestGene))
+    return _suite
 
 
 if __name__ == '__main__':
