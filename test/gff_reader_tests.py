@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-import unittest
 import io
 import os
-from mock import Mock, patch, PropertyMock
+import unittest
+
+from mock import Mock
+
 from src.gff_reader import *
 
-class TestGFFReader(unittest.TestCase):
 
+class TestGFFReader(unittest.TestCase):
     def setUp(self):
         self.reader = GFFReader()
 
@@ -76,32 +78,35 @@ class TestGFFReader(unittest.TestCase):
     def test_extract_cds_args(self):
         line = "scaffold00080\tmaker\tCDS\t106151\t106451\t.\t+\t0\tID=BDOR_007864-RA:cds:0;Parent=BDOR_007864-RA\n".split('\t')
         args = extract_cds_args(line)
-        expected = {'indices': [106151, 106451], 'strand': '+', 'phase': 0, 'identifier': 'BDOR_007864-RA:cds:0', 'parent_id': 'BDOR_007864-RA'}
+        expected = {'indices': [106151, 106451], 'strand': '+', 'phase': 0,
+                    'identifier': 'BDOR_007864-RA:cds:0', 'parent_id': 'BDOR_007864-RA'}
         self.assertEqual(expected, args)
 
     def test_extract_exon_args(self):
         line = "scaffold00080\tmaker\texon\t106151\t106451\t0.9\t+\t.\tID=BDOR_007864-RA:exon:0;Parent=BDOR_007864-RA\n".split('\t')
-        expected = {'indices': [106151, 106451], 'score': 0.9, 'strand': '+', 'identifier': 'BDOR_007864-RA:exon:0', 'parent_id': 'BDOR_007864-RA'}
+        expected = {'indices': [106151, 106451], 'score': 0.9, 'strand': '+',
+                    'identifier': 'BDOR_007864-RA:exon:0', 'parent_id': 'BDOR_007864-RA'}
         args = extract_exon_args(line)
         self.assertEqual(expected, args)
 
     def test_extract_mrna_args(self):
         line = "scaffold00080\tmaker\tmRNA\t106151\t109853\t.\t+\t.\tID=BDOR_007864-RA;Parent=BDOR_007864\n".split('\t')
-        expected = {'indices': [106151, 109853], 'identifier': 'BDOR_007864-RA', 'strand': '+', 'parent_id': 'BDOR_007864',
+        expected = {'indices': [106151, 109853], 'identifier': 'BDOR_007864-RA', 'strand': '+',
+                    'parent_id': 'BDOR_007864',
                     'seq_name': "scaffold00080", 'source': "maker"}
         args = extract_mrna_args(line)
         self.assertEqual(expected, args)
 
     def test_extract_gene_args(self):
         line = "scaffold00080\tmaker\tgene\t106151\t109853\t.\t+\t.\tID=BDOR_007864\n".split('\t')
-        expected = {'seq_name': 'scaffold00080', 'source': 'maker', 'indices': [106151, 109853],\
+        expected = {'seq_name': 'scaffold00080', 'source': 'maker', 'indices': [106151, 109853],
                     'strand': '+', 'identifier': 'BDOR_007864'}
         args = extract_gene_args(line)
         self.assertEqual(expected, args)
 
     def test_extract_other_feature_args(self):
         line = "scaffold00080\tmaker\tstart_codon\t106151\t106153\t.\t+\t.\tID=BDOR_007864-RA:start1;Parent=BDOR_007864-RA\n".split('\t')
-        expected = {'feature_type': 'start_codon', 'indices': [106151, 106153],\
+        expected = {'feature_type': 'start_codon', 'indices': [106151, 106153],
                     'identifier': 'BDOR_007864-RA:start1', 'parent_id': 'BDOR_007864-RA'}
         args = extract_other_feature_args(line)
         self.assertEqual(expected, args)
@@ -171,7 +176,7 @@ class TestGFFReader(unittest.TestCase):
         sample_text += "scaffold00080\tmaker\tstart_codon\t106151\t106153\t.\t+\t.\tID=BDOR_007864-RA:start1;Parent=BDOR_007864-RB\n"
         sample_text += "scaffold00080\tmaker\tstop_codon\t109851\t109853\t.\t+\t.\tID=BDOR_007864-RA:stop2;Parent=BDOR_007864-RB\n"
         return sample_text
-        
+
     def get_out_of_order_text_with_missing_parent(self):
         sample_text = "scaffold00080\tmaker\tgene\t106151\t109853\t.\t+\t.\tID=BDOR_007864\n"
         sample_text += "scaffold00080\tmaker\tmRNA\t106151\t109853\t.\t+\t.\tID=BDOR_007864-RA;Parent=BDOR_007864\n"
@@ -188,7 +193,7 @@ class TestGFFReader(unittest.TestCase):
         sample_text += "scaffold00080\tmaker\tstart_codon\t106151\t106153\t.\t+\t.\tID=BDOR_007864-RA:start1;Parent=BDOR_007864-RB\n"
         sample_text += "scaffold00080\tmaker\tstop_codon\t109851\t109853\t.\t+\t.\tID=BDOR_007864-RA:stop2;Parent=BDOR_007864-RB\n"
         return sample_text
-        
+
     def test_read_file_out_of_order(self):
         text = self.get_out_of_order_text()
         inbuff = io.BytesIO(text)
@@ -204,7 +209,7 @@ class TestGFFReader(unittest.TestCase):
         inbuff = io.BytesIO(text)
         genes, comments, invalids, ignored = self.reader.read_file(inbuff)
         self.assertEqual(1, len(genes))
-        
+
     def get_annotated_gff(self):
         result = "Scaffold1\tI5K\tgene\t133721\t162851\t.\t-\t.\tID=AGLA000002;Name=AglaTmpM000002;\n"
         result += "Scaffold1\tI5K\tmRNA\t133721\t162851\t.\t-\t.\tID=AGLA000002-RA;Name=AglaTmpM000002-RA;Parent=AGLA000002;Dbxref=PRINTS:PR00075;\n"
@@ -259,14 +264,16 @@ class TestGFFReader(unittest.TestCase):
         inbuff = io.BytesIO(text)
         genes, comments, invalids, ignored = self.reader.read_file(inbuff)
         self.assertEquals(1, len(genes))
-        self.assertEquals({"Dbxref": ["PRINTS:PR00075", "PFAM:foo"]}, genes[0].mrnas[0].annotations)
+        self.assertEquals({"Dbxref": ["PRINTS:PR00075", "PFAM:foo"]},
+                          genes[0].mrnas[0].annotations)
 
     def test_read_file_annotated_multi_dbxref_repeated_anno(self):
         text = self.get_annotated_gff_multi_dbxref_repeated_anno()
         inbuff = io.BytesIO(text)
         genes, comments, invalids, ignored = self.reader.read_file(inbuff)
         self.assertEquals(1, len(genes))
-        self.assertEquals({"Dbxref": ["PRINTS:PR00075", "PFAM:foo"]}, genes[0].mrnas[0].annotations)
+        self.assertEquals({"Dbxref": ["PRINTS:PR00075", "PFAM:foo"]},
+                          genes[0].mrnas[0].annotations)
 
     def test_CDS_knows_its_strand(self):
         text = self.get_annotated_gff()
@@ -295,6 +302,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestGFFReader))
     return suite
+
 
 if __name__ == '__main__':
     unittest.main()
