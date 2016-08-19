@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
 import copy
+
 from src.gene_part import GenePart, write_tbl_entry
 from src.translator import reverse_complement
 
-class CDS(GenePart):
 
-    def __init__(self, identifier=None, indices=None, \
+class CDS(GenePart):
+    def __init__(self, identifier=None, indices=None,
                  score=None, phase=None, strand=None, parent_id=None):
-        GenePart.__init__(self, feature_type='CDS', identifier=identifier, \
-                indices=indices, score=score, strand=strand, parent_id=parent_id)
+        GenePart.__init__(self, feature_type='CDS', identifier=identifier,
+                          indices=indices, score=score, strand=strand, parent_id=parent_id)
         self.phase = []
         if phase is not None:
             self.phase.append(phase)
@@ -29,21 +30,21 @@ class CDS(GenePart):
         """Returns coordinates of first and third base of CDS."""
         if strand == '+':
             first_index = self.indices[0][0]
-            return [first_index, first_index+2]
+            return [first_index, first_index + 2]
         elif strand == '-':
             first_index = self.indices[0][1]
-            return [first_index-2, first_index]
+            return [first_index - 2, first_index]
 
     def get_stop_indices(self, strand):
         """Returns coordinates of third-to-last and last base of CDS."""
         if strand == '+':
-            last_index_pair = self.indices[len(self.indices)-1]
+            last_index_pair = self.indices[len(self.indices) - 1]
             last_index = last_index_pair[1]
-            return [last_index-2, last_index]
+            return [last_index - 2, last_index]
         elif strand == '-':
-            last_index_pair = self.indices[len(self.indices)-1]
+            last_index_pair = self.indices[len(self.indices) - 1]
             last_index = last_index_pair[0]
-            return [last_index, last_index+2]
+            return [last_index, last_index + 2]
 
     def sort_attributes(self):
         """Sorts indices, keeping identifiers and phases with their corresponding index pair.
@@ -107,4 +108,3 @@ class CDS(GenePart):
         else:
             phase = self.phase[-1]
         return write_tbl_entry(indices, self.strand, has_start, has_stop, "CDS", phase)
-
