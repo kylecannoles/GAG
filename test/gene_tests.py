@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 
 import unittest
-from mock import Mock, PropertyMock
+from mock import Mock
 from src.gene import Gene
 
 class TestGene(unittest.TestCase):
 
     def setUp(self):
-        self.test_gene0 = Gene(seq_name="sctg_0080_0020", source="maker", indices=[3734, 7436], strand='+', identifier=1)
-        self.test_gene1 = Gene(seq_name="sctg_0080_0020", source="maker", indices=[3734, 7436], strand='+', identifier=1)
-        
+        self.test_gene0 = Gene(seq_name="sctg_0080_0020", source="maker", indices=[3734, 7436],
+                               strand='+', identifier=1)
+        self.test_gene1 = Gene(seq_name="sctg_0080_0020", source="maker", indices=[3734, 7436],
+                               strand='+', identifier=1)
+
         self.fake_mrna1 = Mock()
         self.fake_mrna1.identifier = "fake_mrna1"
         self.fake_mrna1.death_flagged = False
-        
+
         self.fake_mrna2 = Mock()
         self.fake_mrna2.identifier = "fake_mrna2"
         self.fake_mrna2.death_flagged = False
-        
+
         self.test_gene1.mrnas.append(self.fake_mrna1)
         self.test_gene1.mrnas.append(self.fake_mrna2)
 
@@ -41,7 +43,7 @@ class TestGene(unittest.TestCase):
     def test_get_mrna_ids(self):
         expected = ["fake_mrna1", "fake_mrna2"]
         self.assertEquals(self.test_gene1.get_mrna_ids(), expected)
-    
+
     def test_remove_mrna(self):
         self.assertEquals(self.test_gene1.mrnas, [self.fake_mrna1, self.fake_mrna2])
         self.assertEquals(len(self.test_gene1.removed_mrnas), 0)
@@ -61,7 +63,7 @@ class TestGene(unittest.TestCase):
         self.assertEquals(2, len(removed_mrnas))
         self.assertEquals(1, len(self.test_gene1.mrnas))
         self.assertEquals(2, len(self.test_gene1.removed_mrnas))
-    
+
     def test_remove_empty_mrnas(self):
         self.fake_mrna1.rna_type = "mRNA"
         self.fake_mrna1.cds = Mock()
@@ -140,11 +142,11 @@ class TestGene(unittest.TestCase):
         self.fake_mrna1.adjust_indices.assert_called_with(-16, 1)
         self.assertEquals(3734, self.test_gene1.indices[0])
 
-    def test_remove_mrnas_with_internal_stops(self):
+    def test_rm_mrnas_with_internal_stops(self):
         helper = Mock()
         helper.mrna_contains_internal_stop.return_value = True
         self.assertEquals(2, len(self.test_gene1.mrnas))
-        self.test_gene1.remove_mrnas_with_internal_stops(helper)
+        self.test_gene1.rm_mrnas_with_internal_stops(helper)
         self.assertEquals(0, len(self.test_gene1.mrnas))
 
     def test_contains_mrna(self):
@@ -165,7 +167,7 @@ class TestGene(unittest.TestCase):
 
     def test_cds_to_tbl(self):
         self.fake_mrna1.identifier = "foo_mrna"
-        foo = self.test_gene1.cds_to_tbl("foo_mrna")
+        foo = self.fake_mrna1.cds_to_tbl()
         self.fake_mrna1.cds_to_tbl.assert_called_with()
 
     def test_to_mrna_fasta(self):
@@ -228,7 +230,8 @@ class TestGene(unittest.TestCase):
         mrna.add_annotation.assert_called_with("gag_flag", "awesome_anno")
 
     def test_to_tbl_positive(self):
-        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1")
+        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                    identifier="foo_gene_1")
         self.assertFalse(gene.annotations)
         gene.add_annotation('foo', 'dog')
         mrna1 = Mock()
@@ -241,7 +244,8 @@ class TestGene(unittest.TestCase):
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_to_tbl_positive_start_nostop(self):
-        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1")
+        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                    identifier="foo_gene_1")
         self.assertFalse(gene.annotations)
         gene.add_annotation('foo', 'dog')
         mrna1 = Mock()
@@ -256,7 +260,8 @@ class TestGene(unittest.TestCase):
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_to_tbl_positive_nostart_stop(self):
-        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1")
+        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                    identifier="foo_gene_1")
         self.assertFalse(gene.annotations)
         gene.add_annotation('foo', 'dog')
         mrna1 = Mock()
@@ -271,7 +276,8 @@ class TestGene(unittest.TestCase):
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_to_tbl_positive_nostart_nostop(self):
-        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1")
+        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                    identifier="foo_gene_1")
         self.assertFalse(gene.annotations)
         gene.add_annotation('foo', 'dog')
         mrna1 = Mock()
@@ -287,7 +293,8 @@ class TestGene(unittest.TestCase):
 
 
     def test_to_tbl_positive_with_name(self):
-        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1", name="wtfg")
+        gene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                    identifier="foo_gene_1", name="wtfg")
         self.assertFalse(gene.annotations)
         gene.add_annotation('foo', 'dog')
         mrna1 = Mock()
@@ -296,7 +303,10 @@ class TestGene(unittest.TestCase):
         mrna2.to_tbl.return_value = "mrna2_to_tbl...\n"
         gene.mrnas.append(mrna1)
         gene.mrnas.append(mrna2)
-        expected = "1\t50\tgene\n\t\t\tgene\twtfg\n\t\t\tlocus_tag\tfoo_gene_1\nmrna1_to_tbl...\nmrna2_to_tbl...\n"
+        expected = ("1\t50\tgene\n"
+                    "\t\t\tgene\twtfg\n"
+                    "\t\t\tlocus_tag\tfoo_gene_1\nmrna1_to_tbl...\n"
+                    "mrna2_to_tbl...\n") # these are concatinated into one string by python
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_to_tbl_negative(self):
@@ -311,12 +321,14 @@ class TestGene(unittest.TestCase):
         self.assertEquals(gene.to_tbl(), expected)
 
     def test_gene_initialized_without_annotations(self):
-        newgene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1")
+        newgene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                       identifier="foo_gene_1")
         self.assertFalse(newgene.annotations)
         self.assertEquals(0, len(newgene.annotations.keys()))
 
     def test_gene_initialized_with_annotations(self):
-        newgene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+", identifier="foo_gene_1",\
+        newgene = Gene(seq_name="seq1", source="maker", indices=[1, 50], strand="+",
+                       identifier="foo_gene_1",\
                 annotations={"bar": ["cat"]})
         self.assertTrue(newgene.annotations)
         self.assertEquals(1, len(newgene.annotations.keys()))

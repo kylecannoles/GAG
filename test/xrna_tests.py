@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
 import unittest
-from mock import Mock, PropertyMock
+from mock import Mock
 from src.xrna import XRNA
 
 class TestXRNA(unittest.TestCase):
 
     def setUp(self):
-        self.test_mrna0 = XRNA(identifier='bdor_foo', indices=[3734, 7436], strand='-', parent_id=1)
-        self.test_mrna1 = XRNA(identifier='bdor_foo2', indices=[3734, 7436], parent_id=1, seq_name="sctg_0080_0020", source="maker")
-        self.test_mrna2 = XRNA(identifier='bdor_foo3', indices=[3734, 7436], strand='-', parent_id=1, seq_name="sctg_0080_0021", source="maker")
+        self.test_mrna0 = XRNA(identifier='bdor_foo', indices=[3734, 7436], strand='-',
+                               parent_id=1)
+        self.test_mrna1 = XRNA(identifier='bdor_foo2', indices=[3734, 7436], parent_id=1,
+                               seq_name="sctg_0080_0020", source="maker")
+        self.test_mrna2 = XRNA(identifier='bdor_foo3', indices=[3734, 7436], strand='-',
+                               parent_id=1, seq_name="sctg_0080_0021", source="maker")
         self.fake_exon = Mock()
         self.fake_cds = Mock()
         self.fake_start_codon = Mock()
@@ -36,7 +39,7 @@ class TestXRNA(unittest.TestCase):
         self.fake_exon.gagflagged.return_value = True
         self.assertEquals(1, self.test_mrna1.number_of_gagflags())
 
-    def test_add_other_feature(self): 
+    def test_add_other_feature(self):
         self.assertEquals(0, len(self.test_mrna0.other_features))
         self.test_mrna0.add_other_feature(self.fake_start_codon)
         self.assertEquals(1, len(self.test_mrna0.other_features))
@@ -142,17 +145,16 @@ class TestXRNA(unittest.TestCase):
         self.assertTrue(mrna.indices_intersect_mrna([20, 25]))
         self.assertTrue(mrna.indices_intersect_mrna([9, 21]))
 
-    def test_create_start_and_stop_if_necessary(self):
+    def create_start_and_stop_if_needed(self):
         seq_object = Mock()
         cds = Mock()
         cds.extract_sequence.return_value = 'atgtag' # startstop
         cds.get_start_indices.return_value = 20
         cds.get_stop_indices.return_value = 40
         self.test_mrna0.cds = cds
-        seq_name = 'seq_foo'
         strand = '+'
         self.assertFalse(self.test_mrna0.other_features)
-        self.test_mrna0.create_start_and_stop_if_necessary(seq_object, strand)
+        self.test_mrna0.create_start_and_stop_if_needed(seq_object, strand)
         self.assertTrue(self.test_mrna0.other_features)
         self.assertEquals(2, len(self.test_mrna0.other_features))
 
@@ -163,10 +165,9 @@ class TestXRNA(unittest.TestCase):
         cds.get_start_indices.return_value = 20
         cds.get_stop_indices.return_value = 40
         self.test_mrna0.cds = cds
-        seq_name = 'seq_foo'
         strand = '+'
         self.assertFalse(self.test_mrna0.other_features)
-        self.test_mrna0.create_start_and_stop_if_necessary(seq_object, strand)
+        self.test_mrna0.create_start_and_stop_if_needed(seq_object, strand)
         self.assertFalse(self.test_mrna0.other_features)
 
     def test_to_tbl(self):
@@ -211,8 +212,8 @@ class TestXRNA(unittest.TestCase):
         expected += "\t\t\tproduct\tdog\n"
         expected += "\t\t\tprotein_id\tgnl|ncbi|bdor_foo2\n"
         expected += "\t\t\ttranscript_id\tgnl|ncbi|bdor_foo2_mrna\n"
-        print(expected)
-        print(self.test_mrna1.to_tbl())
+        print expected
+        print self.test_mrna1.to_tbl()
         self.assertEquals(expected, self.test_mrna1.to_tbl())
 
     def test_indices_intersect_cds_false(self):
@@ -233,35 +234,35 @@ class TestXRNA(unittest.TestCase):
 
     def set_fake_exon_indices(self):
         self.fake_exon.indices = [[1, 5], [11, 16], [21, 27]]
-        
+
     def set_fake_exon_indices_reverse(self):
         self.fake_exon.indices = [[27, 21], [16, 11], [5, 1]]
 
     def test_get_longest_exon(self):
         self.set_fake_exon_indices()
         self.assertEquals(7, self.test_mrna1.get_longest_exon())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(7, self.test_mrna2.get_longest_exon())
 
     def test_get_shortest_exon(self):
         self.set_fake_exon_indices()
         self.assertEquals(5, self.test_mrna1.get_shortest_exon())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(5, self.test_mrna2.get_shortest_exon())
 
     def test_get_total_exon_length(self):
         self.set_fake_exon_indices()
         self.assertEquals(18, self.test_mrna1.get_total_exon_length())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(18, self.test_mrna2.get_total_exon_length())
 
     def test_get_num_exons(self):
         self.set_fake_exon_indices()
         self.assertEquals(3, self.test_mrna1.get_num_exons())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(3, self.test_mrna2.get_num_exons())
 
@@ -280,14 +281,14 @@ class TestXRNA(unittest.TestCase):
     def test_get_longest_intron(self):
         self.set_fake_exon_indices()
         self.assertEquals(5, self.test_mrna1.get_longest_intron())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(5, self.test_mrna2.get_longest_intron())
 
     def test_get_shortest_intron(self):
         self.set_fake_exon_indices()
         self.assertEquals(4, self.test_mrna1.get_shortest_intron())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(4, self.test_mrna2.get_shortest_intron())
 
@@ -296,14 +297,14 @@ class TestXRNA(unittest.TestCase):
     def test_get_total_intron_length(self):
         self.set_fake_exon_indices()
         self.assertEquals(9, self.test_mrna1.get_total_intron_length())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(9, self.test_mrna2.get_total_intron_length())
 
     def test_get_num_introns(self):
         self.set_fake_exon_indices()
         self.assertEquals(2, self.test_mrna1.get_num_introns())
-        
+
         self.set_fake_exon_indices_reverse()
         self.assertEquals(2, self.test_mrna2.get_num_introns())
 

@@ -120,6 +120,7 @@ class TestSequence(unittest.TestCase):
         badseq = Sequence('badseq', 'nnGATTACAnNNn')
         mockgene = Mock()
         mockgene.indices = [3, 8]
+        mockgene.adjust_indices = Mock(return_value = mockgene)
         badseq.genes = [mockgene]
         badseq.remove_terminal_ns()
         self.assertEquals("GATTACA", badseq.bases)
