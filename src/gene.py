@@ -221,7 +221,7 @@ class Gene(object):
             seq_object: the actual Sequence containing the gene. I know, I know.
         """
         for mrna in self.mrnas:
-            mrna.create_start_and_stop_if_necessary(seq_object, self.strand)
+            mrna.create_start_and_stop_if_needed(seq_object, self.strand)
 
     def adjust_indices(self, increment_by, start_index=1):
         """Adds 'increment_by' to both indices,
